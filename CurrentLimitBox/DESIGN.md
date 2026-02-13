@@ -8,7 +8,7 @@
 
 | Component | Key Dimensions | Mounting |
 |-----------|---------------|----------|
-| 1156 (BA15S) taillight bulb | 26.5mm glass dia, 15mm base dia, ~52mm long, 2mm bayonet pins | Friction-fit clips on angled tab |
+| 1156 (BA15S) taillight bulb | 26.5mm glass dia, 15mm base dia, ~52mm long, 2mm bayonet pins | Through-hole + bayonet notches on angled tab, secured by cable tie |
 | Large panel-mount slide switch | 50mm total X length, 11.8mm x 6.3mm slide opening, 37.5mm screw hole centers | M3 screws through angled tab |
 | 5-position terminal strip | 64.7mm wide, 57mm screw hole centers, 9.1mm pitch, 22mm Y-body, 13mm Z-body | Friction-fit cylindrical posts (ElectricBox pattern) |
 
@@ -49,12 +49,7 @@ All features centered at face midpoint (17.5mm along the 35mm face).
 ### Bulb Holder (X = 20mm)
 - 15.5mm diameter through-hole (0.5mm clearance on 15mm base)
 - Two 3mm-wide pin notches on opposite sides along face direction (for BA15S bayonet pins, 1mm tolerance)
-- Two friction-fit clips on inner face (v1.1: tapered wedge profile):
-  - 2mm thick (X) x 10mm wide (along face) x 8mm deep (protruding inward)
-  - Tapered: full 10mm face-height at inner face, ~5.4mm at far end
-  - Bottom edge stays at constant Z (no unsupported overhang)
-  - 0.5mm gap from hole edge
-  - Positioned at X = 10.75 and X = 29.25
+- Bulb secured by cable tie through inner cavity (v1.2: clips removed)
 
 ### Slide Switch (X = 55mm)
 - 11.8mm x 6.3mm rectangular cutout (slide opening)
@@ -68,7 +63,7 @@ All features centered at face midpoint (17.5mm along the 35mm face).
          80mm (X)
     ┌──────────────────────────────────────┐
     │                                      │
-    │   [clip]  ◯  [clip]   ●  ▬▬▬▬  ●   │  35mm face
+    │          ◯              ●  ▬▬▬▬  ●   │  35mm face
     │        (bulb)        (screw)(sw)(screw)
     │                                      │
     └──────────────────────────────────────┘
@@ -93,3 +88,4 @@ Built with **Part primitives and boolean operations** (`Part.makeBox`, `Part.mak
 |---------|------|---------|
 | 1.0 | 2026-02-12 | Initial design. Tab angle changed from 45 to 55 deg for PETG printability. Box length increased from 33mm to 49mm for terminal strip access. Switch cutout corrected to measured 11.8x6.3mm. Screw holes changed to cylindrical posts per ElectricBox pattern. |
 | 1.1 | 2026-02-13 | Post-print fixes: (1) Box length 49→79mm for wiring access, strip shifted to Y=54. (2) Bulb clips redesigned as tapered wedges (8mm depth, constant-Z bottom) — rectangular clips failed to print. (3) 2mm 45° chamfer added around switch cutout for actuator housing clearance. |
+| 1.2 | 2026-02-13 | Removed bulb friction clips — bulb secured by cable tie instead. Project complete. |

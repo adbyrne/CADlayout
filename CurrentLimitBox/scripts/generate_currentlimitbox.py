@@ -3,7 +3,7 @@
 Generate CurrentLimitBox parametric model in FreeCAD.
 
 Creates a 3D-printable box for DCC current-limiting components:
-- 1156 (BA15S) taillight bulb with friction-fit clips
+- 1156 (BA15S) taillight bulb (through-hole + bayonet notches, secured by cable tie)
 - Panel-mount slide switch with M3 screw holes
 - 5-position terminal strip with cylindrical mounting posts
 
@@ -47,12 +47,6 @@ BULB_HOLE_DIAMETER = 15.5  # mm (15mm base + 0.5mm clearance)
 BULB_NOTCH_WIDTH = 3.0  # mm (2mm bayonet pin + 1mm tolerance)
 BULB_NOTCH_DEPTH = 4.0  # mm radial extent beyond hole edge
 
-# --- Bulb friction clips ---
-CLIP_THICKNESS = 2.0    # mm in X direction
-CLIP_WIDTH = 10.0       # mm along tab face direction
-CLIP_DEPTH = 8.0        # mm protruding inward from inner face — v1.1: was 12mm, reduced for printability
-CLIP_GAP = 0.5          # mm gap between clip and hole edge
-
 # --- Slide switch ---
 SWITCH_X = 55.0         # X center position on tab face
 SWITCH_CUTOUT_WIDTH = 11.8   # mm in X direction (measured)
@@ -93,17 +87,11 @@ POST_X1 = (BOX_WIDTH - POST_X_SPACING) / 2
 POST_X2 = POST_X1 + POST_X_SPACING
 POST_Y_HALF = POST_Y_SPACING / 2
 
-# Bulb clip positions
 BULB_RADIUS = BULB_HOLE_DIAMETER / 2
-CLIP_OFFSET_X = BULB_RADIUS + CLIP_GAP + CLIP_THICKNESS / 2
 
 # Switch screw positions
 SWITCH_SCREW_X1 = SWITCH_X - SWITCH_SCREW_SPACING / 2
 SWITCH_SCREW_X2 = SWITCH_X + SWITCH_SCREW_SPACING / 2
-
-# Inner face center (offset from outer face by tab thickness)
-INNER_CENTER_Y = FACE_CENTER_Y + TAB_WALL_THICKNESS * SIN_A
-INNER_CENTER_Z = FACE_CENTER_Z - TAB_WALL_THICKNESS * COS_A
 
 
 # =============================================================================
@@ -185,63 +173,6 @@ def build_model():
         nf = Part.Face(nw)
         notch = nf.extrude(FreeCAD.Vector(0, 10 * SIN_A, -10 * COS_A))
         result = result.cut(notch)
-
-    # --- Bulb friction clips (v1.1: tapered wedges for printability) ---
-    # Each clip is a trapezoidal prism: full height at inner face, tapers to
-    # a thin edge at CLIP_DEPTH inward. Bottom edge stays at constant Z so
-    # there's no unsupported overhang.
-    for sign in [-1, 1]:
-        clip_x = BULB_X + sign * CLIP_OFFSET_X
-        hw = CLIP_THICKNESS / 2
-        hf = CLIP_WIDTH / 2
-
-        # P1/P2 are the bottom/top of the clip at the inner face (near face)
-        # P3/P4 are the top/bottom at the far end (CLIP_DEPTH inward along normal)
-        # Bottom edge (P1→P4) stays at constant Z for printability
-
-        # Near face bottom (P1)
-        p1_y = INNER_CENTER_Y - hf * FACE_DIR_Y
-        p1_z = INNER_CENTER_Z - hf * FACE_DIR_Z
-
-        # Near face top (P2)
-        p2_y = INNER_CENTER_Y + hf * FACE_DIR_Y
-        p2_z = INNER_CENTER_Z + hf * FACE_DIR_Z
-
-        # Far end: move P1 inward along normal direction
-        p4_y = p1_y + CLIP_DEPTH * INWARD_DIR_Y
-        p4_z = p1_z + CLIP_DEPTH * INWARD_DIR_Z
-
-        # Far end top: same Y as P4, but Z stays at P1's Z (constant Z bottom)
-        # The "top" at far end is at same Z as P1 (bottom at near face)
-        # Actually, we want bottom edge horizontal. P1 and P4 should share the
-        # same Z. The inward normal has a -Z component, so P4 drops in Z.
-        # Fix: keep P4 at P1's Z, adjust Y to match the inward projection at
-        # that Z level.
-        # P4 = P1 moved purely in Y (horizontal), distance = CLIP_DEPTH * sin(angle) / 1
-        # The horizontal (Y) component of inward normal travel:
-        p4_z = p1_z  # keep Z constant (printable bottom)
-        p4_y = p1_y + CLIP_DEPTH * SIN_A  # horizontal-only inward travel
-
-        # Far end top: from P4, go up in face direction by the remaining height
-        # Height at far end = full face height minus the Z drop we avoided
-        # The Z drop over CLIP_DEPTH along normal = CLIP_DEPTH * cos(TAB_ANGLE)
-        far_face_height = CLIP_WIDTH - CLIP_DEPTH * COS_A
-        if far_face_height < 1.0:
-            far_face_height = 1.0  # minimum 1mm lip
-        p3_y = p4_y + far_face_height * FACE_DIR_Y
-        p3_z = p4_z + far_face_height * FACE_DIR_Z
-
-        # Build trapezoid wire in YZ plane, extrude in X
-        x_off = clip_x - hw
-        tp1 = FreeCAD.Vector(x_off, p1_y, p1_z)
-        tp2 = FreeCAD.Vector(x_off, p2_y, p2_z)
-        tp3 = FreeCAD.Vector(x_off, p3_y, p3_z)
-        tp4 = FreeCAD.Vector(x_off, p4_y, p4_z)
-
-        tw = Part.makePolygon([tp1, tp2, tp3, tp4, tp1])
-        tf = Part.Face(tw)
-        clip = tf.extrude(FreeCAD.Vector(CLIP_THICKNESS, 0, 0))
-        result = result.fuse(clip)
 
     # --- Switch cutout ---
     sw_hw = SWITCH_CUTOUT_WIDTH / 2
