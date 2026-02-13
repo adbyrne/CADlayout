@@ -15,7 +15,7 @@
 ## Coordinate System
 
 - **X-axis**: Box width (80mm)
-- **Y-axis**: Box length (49mm outer). Y=0 is the front edge (tab side).
+- **Y-axis**: Box length (79mm outer). Y=0 is the front edge (tab side).
 - **Z-axis**: Box depth (17mm). Z=0 is the floor (presses into foam). Open face at Z=17 (faces downward when mounted).
 - 55-degree tab extends from front edge (Y=0) going in +Y and +Z directions.
 
@@ -25,8 +25,8 @@
 |---------|-------|-------|
 | Outer width (X) | 80mm | |
 | Internal width | 76mm | 2mm walls each side |
-| Outer length (Y) | 49mm | |
-| Internal cavity length (Y) | 45mm | Terminal strip body (22mm) + wiring clearance |
+| Outer length (Y) | 79mm | v1.1: was 49mm, increased 30mm for wiring access |
+| Internal cavity length (Y) | 75mm | Terminal strip body (22mm) + generous wiring clearance |
 | Internal depth (Z) | 15mm | |
 | Wall/floor thickness | 2mm | |
 | Tab angle | 55 deg from horizontal | 35 deg overhang - safe for PETG on Prusa Core One |
@@ -35,11 +35,11 @@
 
 ## Terminal Strip Placement
 
-- Strip center Y = 24mm (strip body from Y=13 to Y=35)
-- Back wall inner face at Y=47, giving 12mm clearance for wire lugs
+- Strip center Y = 54mm (strip body from Y=43 to Y=65)
+- Back wall inner face at Y=77, giving 12mm clearance for wire lugs
 - 4 cylindrical mounting posts in 2x2 grid (matching ElectricBox pattern):
   - X positions: 11.5mm and 68.5mm (57mm apart, centered on 80mm width)
-  - Y positions: 20.06mm and 27.94mm (7.88mm apart, centered on strip)
+  - Y positions: 50.06mm and 57.94mm (7.88mm apart, centered on strip)
   - Post diameter: 3.9mm, height: 6.35mm
 
 ## Angled Tab Features
@@ -49,13 +49,17 @@ All features centered at face midpoint (17.5mm along the 35mm face).
 ### Bulb Holder (X = 20mm)
 - 15.5mm diameter through-hole (0.5mm clearance on 15mm base)
 - Two 3mm-wide pin notches on opposite sides along face direction (for BA15S bayonet pins, 1mm tolerance)
-- Two friction-fit clips on inner face:
-  - 2mm thick (X) x 10mm wide (along face) x 12mm deep (protruding inward)
+- Two friction-fit clips on inner face (v1.1: tapered wedge profile):
+  - 2mm thick (X) x 10mm wide (along face) x 8mm deep (protruding inward)
+  - Tapered: full 10mm face-height at inner face, ~5.4mm at far end
+  - Bottom edge stays at constant Z (no unsupported overhang)
   - 0.5mm gap from hole edge
   - Positioned at X = 10.75 and X = 29.25
 
 ### Slide Switch (X = 55mm)
 - 11.8mm x 6.3mm rectangular cutout (slide opening)
+- 2mm 45° chamfer around cutout outer edge (v1.1: for actuator housing clearance)
+  - Outer face: 15.8mm x 10.3mm, tapers to 11.8mm x 6.3mm at 2mm depth
 - Two M3 mounting holes (3.2mm dia) at X = 36.25 and X = 73.75 (37.5mm apart)
 
 ## Layout (looking at angled tab face)
@@ -88,3 +92,4 @@ Built with **Part primitives and boolean operations** (`Part.makeBox`, `Part.mak
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-02-12 | Initial design. Tab angle changed from 45 to 55 deg for PETG printability. Box length increased from 33mm to 49mm for terminal strip access. Switch cutout corrected to measured 11.8x6.3mm. Screw holes changed to cylindrical posts per ElectricBox pattern. |
+| 1.1 | 2026-02-13 | Post-print fixes: (1) Box length 49→79mm for wiring access, strip shifted to Y=54. (2) Bulb clips redesigned as tapered wedges (8mm depth, constant-Z bottom) — rectangular clips failed to print. (3) 2mm 45° chamfer added around switch cutout for actuator housing clearance. |

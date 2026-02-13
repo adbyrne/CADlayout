@@ -25,7 +25,7 @@ import math
 
 # --- Box dimensions ---
 BOX_WIDTH = 80.0        # X-axis, mm
-BOX_LENGTH = 49.0       # Y-axis, mm (outer)
+BOX_LENGTH = 79.0       # Y-axis, mm (outer) — v1.1: was 49mm, increased 30mm for wiring access
 BOX_HEIGHT = 17.0       # Z-axis, mm (2mm floor + 15mm walls)
 WALL_THICKNESS = 2.0    # mm, walls and floor
 
@@ -37,7 +37,7 @@ TAB_WALL_THICKNESS = 5.0  # mm normal to face
 # --- Terminal strip mounting posts (ElectricBox pattern) ---
 POST_RADIUS = 1.95      # mm (3.9mm diameter)
 POST_HEIGHT = 6.35      # mm
-STRIP_CENTER_Y = 24.0   # mm from front edge
+STRIP_CENTER_Y = 54.0   # mm from front edge — v1.1: was 24mm, shifted +30mm with box length
 POST_X_SPACING = 57.0   # mm center-to-center along X
 POST_Y_SPACING = 7.88   # mm center-to-center across strip
 
@@ -50,7 +50,7 @@ BULB_NOTCH_DEPTH = 4.0  # mm radial extent beyond hole edge
 # --- Bulb friction clips ---
 CLIP_THICKNESS = 2.0    # mm in X direction
 CLIP_WIDTH = 10.0       # mm along tab face direction
-CLIP_DEPTH = 12.0       # mm protruding inward from inner face
+CLIP_DEPTH = 8.0        # mm protruding inward from inner face — v1.1: was 12mm, reduced for printability
 CLIP_GAP = 0.5          # mm gap between clip and hole edge
 
 # --- Slide switch ---
@@ -59,6 +59,7 @@ SWITCH_CUTOUT_WIDTH = 11.8   # mm in X direction (measured)
 SWITCH_CUTOUT_HEIGHT = 6.3   # mm along tab face direction (measured)
 SWITCH_SCREW_SPACING = 37.5  # mm center-to-center
 SWITCH_SCREW_DIAMETER = 3.2  # mm (M3 clearance)
+SWITCH_CHAMFER_DEPTH = 2.0   # mm, 45° chamfer around switch cutout (v1.1)
 
 # --- Export paths ---
 EXPORT_DIR = "printed_files"
@@ -185,30 +186,61 @@ def build_model():
         notch = nf.extrude(FreeCAD.Vector(0, 10 * SIN_A, -10 * COS_A))
         result = result.cut(notch)
 
-    # --- Bulb friction clips ---
+    # --- Bulb friction clips (v1.1: tapered wedges for printability) ---
+    # Each clip is a trapezoidal prism: full height at inner face, tapers to
+    # a thin edge at CLIP_DEPTH inward. Bottom edge stays at constant Z so
+    # there's no unsupported overhang.
     for sign in [-1, 1]:
         clip_x = BULB_X + sign * CLIP_OFFSET_X
         hw = CLIP_THICKNESS / 2
         hf = CLIP_WIDTH / 2
 
-        p1 = FreeCAD.Vector(clip_x - hw,
-                             INNER_CENTER_Y - hf * FACE_DIR_Y,
-                             INNER_CENTER_Z - hf * FACE_DIR_Z)
-        p2 = FreeCAD.Vector(clip_x - hw,
-                             INNER_CENTER_Y + hf * FACE_DIR_Y,
-                             INNER_CENTER_Z + hf * FACE_DIR_Z)
-        p3 = FreeCAD.Vector(clip_x + hw,
-                             INNER_CENTER_Y + hf * FACE_DIR_Y,
-                             INNER_CENTER_Z + hf * FACE_DIR_Z)
-        p4 = FreeCAD.Vector(clip_x + hw,
-                             INNER_CENTER_Y - hf * FACE_DIR_Y,
-                             INNER_CENTER_Z - hf * FACE_DIR_Z)
+        # P1/P2 are the bottom/top of the clip at the inner face (near face)
+        # P3/P4 are the top/bottom at the far end (CLIP_DEPTH inward along normal)
+        # Bottom edge (P1→P4) stays at constant Z for printability
 
-        cw = Part.makePolygon([p1, p2, p3, p4, p1])
-        cf = Part.Face(cw)
-        clip = cf.extrude(FreeCAD.Vector(
-            0, CLIP_DEPTH * INWARD_DIR_Y, CLIP_DEPTH * INWARD_DIR_Z
-        ))
+        # Near face bottom (P1)
+        p1_y = INNER_CENTER_Y - hf * FACE_DIR_Y
+        p1_z = INNER_CENTER_Z - hf * FACE_DIR_Z
+
+        # Near face top (P2)
+        p2_y = INNER_CENTER_Y + hf * FACE_DIR_Y
+        p2_z = INNER_CENTER_Z + hf * FACE_DIR_Z
+
+        # Far end: move P1 inward along normal direction
+        p4_y = p1_y + CLIP_DEPTH * INWARD_DIR_Y
+        p4_z = p1_z + CLIP_DEPTH * INWARD_DIR_Z
+
+        # Far end top: same Y as P4, but Z stays at P1's Z (constant Z bottom)
+        # The "top" at far end is at same Z as P1 (bottom at near face)
+        # Actually, we want bottom edge horizontal. P1 and P4 should share the
+        # same Z. The inward normal has a -Z component, so P4 drops in Z.
+        # Fix: keep P4 at P1's Z, adjust Y to match the inward projection at
+        # that Z level.
+        # P4 = P1 moved purely in Y (horizontal), distance = CLIP_DEPTH * sin(angle) / 1
+        # The horizontal (Y) component of inward normal travel:
+        p4_z = p1_z  # keep Z constant (printable bottom)
+        p4_y = p1_y + CLIP_DEPTH * SIN_A  # horizontal-only inward travel
+
+        # Far end top: from P4, go up in face direction by the remaining height
+        # Height at far end = full face height minus the Z drop we avoided
+        # The Z drop over CLIP_DEPTH along normal = CLIP_DEPTH * cos(TAB_ANGLE)
+        far_face_height = CLIP_WIDTH - CLIP_DEPTH * COS_A
+        if far_face_height < 1.0:
+            far_face_height = 1.0  # minimum 1mm lip
+        p3_y = p4_y + far_face_height * FACE_DIR_Y
+        p3_z = p4_z + far_face_height * FACE_DIR_Z
+
+        # Build trapezoid wire in YZ plane, extrude in X
+        x_off = clip_x - hw
+        tp1 = FreeCAD.Vector(x_off, p1_y, p1_z)
+        tp2 = FreeCAD.Vector(x_off, p2_y, p2_z)
+        tp3 = FreeCAD.Vector(x_off, p3_y, p3_z)
+        tp4 = FreeCAD.Vector(x_off, p4_y, p4_z)
+
+        tw = Part.makePolygon([tp1, tp2, tp3, tp4, tp1])
+        tf = Part.Face(tw)
+        clip = tf.extrude(FreeCAD.Vector(CLIP_THICKNESS, 0, 0))
         result = result.fuse(clip)
 
     # --- Switch cutout ---
@@ -232,6 +264,42 @@ def build_model():
     sw_face = Part.Face(sw_wire)
     sw_cutout = sw_face.extrude(FreeCAD.Vector(0, 10 * SIN_A, -10 * COS_A))
     result = result.cut(sw_cutout)
+
+    # --- Switch cutout chamfer (v1.1) ---
+    # 45° chamfer: larger rectangle on outer tab surface, tapering to
+    # existing cutout size at SWITCH_CHAMFER_DEPTH into the wall.
+    ch = SWITCH_CHAMFER_DEPTH
+
+    # Outer profile: on the actual outer face surface (no outward offset),
+    # widened by chamfer depth on each side
+    outer_hw = (SWITCH_CUTOUT_WIDTH + 2 * ch) / 2
+    outer_hh = (SWITCH_CUTOUT_HEIGHT + 2 * ch) / 2
+
+    outer_pts = []
+    for sx, sy in [(-outer_hw, -outer_hh), (-outer_hw, outer_hh),
+                   (outer_hw, outer_hh), (outer_hw, -outer_hh)]:
+        outer_pts.append(FreeCAD.Vector(
+            SWITCH_X + sx,
+            FACE_CENTER_Y + sy * FACE_DIR_Y,
+            FACE_CENTER_Z + sy * FACE_DIR_Z
+        ))
+    outer_pts.append(outer_pts[0])
+    outer_wire = Part.makePolygon(outer_pts)
+
+    # Inner profile: at chamfer depth INTO the wall, at original cutout size
+    inner_pts = []
+    for sx, sy in [(-sw_hw, -sw_hh), (-sw_hw, sw_hh),
+                   (sw_hw, sw_hh), (sw_hw, -sw_hh)]:
+        inner_pts.append(FreeCAD.Vector(
+            SWITCH_X + sx,
+            FACE_CENTER_Y + sy * FACE_DIR_Y + ch * INWARD_DIR_Y,
+            FACE_CENTER_Z + sy * FACE_DIR_Z + ch * INWARD_DIR_Z
+        ))
+    inner_pts.append(inner_pts[0])
+    inner_wire = Part.makePolygon(inner_pts)
+
+    chamfer_loft = Part.makeLoft([outer_wire, inner_wire], True)
+    result = result.cut(chamfer_loft)
 
     # --- Switch M3 screw holes ---
     for sx in [SWITCH_SCREW_X1, SWITCH_SCREW_X2]:
