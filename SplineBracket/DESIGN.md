@@ -124,4 +124,4 @@ Built with Part primitives and boolean operations in FreeCAD 1.0.2 via MCP bridg
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-02-21 | Initial design. Holder with trapezoid groove + V-tongue. L-bracket with dual full-height 5mm gusset ribs, V-groove, 3mm inside fillets. Test print in progress. |
-| 1.0.1 | 2026-02-22 | Corrected bracket leg height 220→120mm and lower bolt hole Y=-193→Y=-93. |
+| 1.0.1 | 2026-02-22 | Corrected bracket leg height 220→120mm and lower bolt hole Y=-193→Y=-93. Test prints successful — project complete. |
