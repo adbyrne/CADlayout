@@ -1,7 +1,21 @@
 # SwitchToggle v2 — Improvement Plan
 
-*Prepared: 2026-03-16. Assumes v1 test print is mechanically acceptable.*
+*Prepared: 2026-03-16. Updated: 2026-03-17 to reflect v5 baseline.*
+*Assumes v5 test print (cylinder fulcrum / T-slot lever) is mechanically acceptable.*
 *Prioritized: High = functional improvement; Medium = quality/polish; Low = nice-to-have.*
+
+## Completed in v5 (not in scope for v2)
+
+| Item | Resolved in v5 |
+|------|---------------|
+| Lever width matches post gap | Lever 20mm wide, 1mm clearance each side of 22mm gap |
+| Cylinder fulcrum | Ø8mm cylinder runs X-axis through lever center (Y=17.5) |
+| Single rod slot | 5×14mm vertical slot replaces dual round holes; unit rotatable for orientation |
+| T-slot rod connection | Pre-assembled stud+nut slides in from Y=0 edge; nut captive |
+| Rod slot in FrontPlate | Matches shell slot (5×14mm, X=22.5..27.5, Y=8..22) |
+| Print orientation note | Lever must flip 180° around X-axis in PrusaSlicer |
+
+---
 
 ---
 
@@ -173,6 +187,9 @@ Implement items 1, 2, 3, 4, 7, 8 in one script revision (all low/medium complexi
 high impact). Item 5 (snap tabs) as a stretch goal. Item 6 (collet) as a separate
 sub-project. Item 9 as optional filler.
 
+**Start of session checklist:** Measure PEBA JST-XH 3-pin socket body before item 1 can
+be sized. All other items can proceed from DESIGN.md dimensions alone.
+
 ---
 
-*This plan is a starting point — review after test print results are known.*
+*This plan is a starting point — review after v5 test print results are confirmed.*
