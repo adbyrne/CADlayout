@@ -54,37 +54,26 @@ groove (not in hole) locks it flush.
 
 ---
 
-## 3. Lever Stop Nubs  ★ High
+## 3. Lever Stop Nubs  ★ Deferred
 
-**Problem:** v1 lever has no mechanical travel limit. The BluePoint spring holds
-position but there is no over-center positive feel; operator cannot feel "end of throw"
-without visual reference.
+**Problem:** v1 lever has no mechanical travel limit.
 
-**Solution:** Add two small raised nubs (1.5mm high × 3mm dia) on the FrontPlate face,
-flanking the lever path at ±35° (5° over-throw past the 30° operating angle). Lever
-bottom arm contacts nub at end of stroke — provides tactile stop without relying on
-BluePoint internal stops.
-
-**Action:**
-- Add nub positions to `build_front_plate()` in generate script
-- Verify nub Y-position clears the lever slot at full throw
+**Status:** Deferred pending field testing. The BluePoint internal switch mechanism
+provides a positive detent and holds position — no additional stop is needed until
+real-world operation confirms otherwise. If added, nubs must be symmetric at ±θ° on
+the FrontPlate face so the module works correctly in both normal and flipped orientation.
 
 ---
 
-## 4. Thumb Pad Ergonomics  ★ Medium
+## 4. Thumb Pad Ergonomics  ★ Deferred
 
-**Problem:** v1 lever upper arm is a flat 15×12.5mm rectangle. No tactile distinction
-between top and bottom, and no grip texture.
+**Problem:** Lever upper arm has no grip texture.
 
-**Options:**
-- **Ribbed:** 3–4 horizontal ribs (0.5mm high) across thumb contact face — good grip,
-  easy to print flat.
-- **Thumb hollow:** 1mm concave recess on operator face — comfortable for thumb tip,
-  slightly harder to model.
-- **Tapered paddle:** Wider at top (20mm) tapering to 15mm at pivot — more lever-like
-  feel, occupies more fascia space.
-
-*Recommendation: Ribbed — minimal geometry change, big tactile improvement.*
+**Status:** Deferred pending field testing. If added, ribs must be placed on BOTH the
+upper arm AND the lower arm (above T-slot) at mirror positions from the pivot center —
+the module can be installed flipped 180° on the fascia to reverse N/R sense, which
+requires both arms to be equally ergonomic. The BluePoint detent provides sufficient
+tactile feedback for now.
 
 ---
 
@@ -142,16 +131,12 @@ profiles, or investigate FreeCAD text-to-shape workflow.
 
 ---
 
-## 8. Cable Slot Entry Chamfer  ★ Low
+## 8. Cable Slot Entry Chamfer  ★ Deferred
 
-**Problem:** The 2-56 rod must be threaded into the 2.5mm lever cable slot during
-installation. The slot opens at the lever bottom edge (Y=0), which is a hard 90° corner.
+**Problem:** The 2-56 rod must be threaded into the T-slot during installation.
 
-**Solution:** 45° chamfer on the Y=0 entry of the cable slot — widens entry from
-2.5mm to ~4.5mm at the bottom edge, making rod threading much easier.
-
-**Action:** Replace the plain cable slot box with a small loft from 4.5mm wide at
-Y=0 tapering to 2.5mm at Y=2, then straight 2.5mm slot Y=2..5.
+**Status:** Deferred pending field testing. Assembly experience will confirm whether
+the current T-slot entry is awkward enough to warrant a chamfer.
 
 ---
 
@@ -172,24 +157,30 @@ from the lever path.
 |---|------|----------|-----------------|------------|
 | 1 | JST-XH connector pocket | High | Shell | Medium |
 | 2 | LED retention (bezel) | High | Shell | Low |
-| 3 | Lever stop nubs | High | FrontPlate | Low |
-| 4 | Thumb pad ribs | Medium | Lever | Low |
+| 3 | Lever stop nubs | Deferred | FrontPlate | Low |
+| 4 | Thumb pad ribs | Deferred | Lever | Low |
 | 5 | Snap tabs or M2 screws | Medium | Shell + FrontPlate | Medium |
 | 6 | Fascia mount collet | Medium | New part | High |
 | 7 | Back face orientation labels | Medium | Shell | Low |
-| 8 | Cable slot chamfer | Low | Lever | Low |
+| 8 | Cable slot chamfer | Deferred | Lever | Low |
 | 9 | Wire management clips | Low | Shell | Low |
 
 ---
 
-## Suggested v2 Scope
+## Active v2 Scope
 
-Implement items 1, 2, 3, 4, 7, 8 in one script revision (all low/medium complexity,
-high impact). Item 5 (snap tabs) as a stretch goal. Item 6 (collet) as a separate
-sub-project. Item 9 as optional filler.
+| Priority | Item | Status |
+|----------|------|--------|
+| High | 1 — JST-XH connector pocket | Blocked: measure PEBA 3-pin socket body first |
+| High | 2 — LED retention bezel | Ready to implement |
+| Medium | 5 — Snap tabs / M2 screws | Stretch goal |
+| Low | 9 — Wire management clips | Optional filler |
+| Separate | 6 — Fascia mount collet | Separate sub-project |
+| Deferred | 3, 4, 8 | Pending field test of v7 print |
+| Skipped | 7 — Orientation labels | Paint pen preferred over CAD text |
 
-**Start of session checklist:** Measure PEBA JST-XH 3-pin socket body before item 1 can
-be sized. All other items can proceed from DESIGN.md dimensions alone.
+**Next action:** Implement item 2 (LED retention bezel). Then measure JST-XH socket
+body to unblock item 1.
 
 ---
 
