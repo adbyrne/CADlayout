@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
-"""Generate SwitchToggle v5 parametric model in FreeCAD.
+"""Generate SwitchToggle v6 parametric model in FreeCAD.
 
 THREE 3D-printable parts:
 
   Shell      — 50x50x12mm hollow tray, open front face (electronics access)
   FrontPlate — 50x50x3mm plate + 8mm pivot posts (closes the shell)
   Lever      — Ø8mm pivot cylinder as fulcrum (X-axis), upper thumb arm + lower rod arm
+
+Changes from v5:
+  - LED holes moved from top/bottom walls to side walls (diagonal placement)
+      Top LED:    left wall (X=0..2),  Y=45 (near top edge)
+      Bottom LED: right wall (X=48..50), Y=5  (near bottom edge)
 
 Changes from v4:
   - Lever: wider (20mm), taller (35mm total)
@@ -45,10 +50,11 @@ BASE_H = 50.0   # Y: height
 SHELL_DEPTH = 12.0   # Z: back face Z=0, open front face at Z=12
 WALL_T      =  2.0   # wall thickness on all sides
 
-# --- LED holes in shell top/bottom walls ---
-LED_DIA =  5.2
-LED_X   = 25.0
-LED_Z   =  9.0
+# --- LED holes in shell side walls (v6: top-left, bottom-right diagonal) ---
+LED_DIA   =  5.2
+LED_Z     =  9.0   # Z depth in shell (3mm from front rim)
+LED_TOP_Y = 45.0   # top LED: left wall (X=0..2), near top edge
+LED_BOT_Y =  5.0   # bottom LED: right wall (X=48..50), near bottom edge
 
 # --- Shell back face features ---
 # Rod slot (replaces two round holes from v4)
@@ -136,16 +142,16 @@ def build_shell():
                           FreeCAD.Vector(WALL_T, WALL_T, WALL_T))
     result = result.cut(cavity)
 
-    # LED holes in top/bottom walls (Y direction)
+    # LED holes in side walls (X direction): top-left and bottom-right
     led_top = Part.makeCylinder(
         LED_DIA / 2, WALL_T + 2,
-        FreeCAD.Vector(LED_X, BASE_H - WALL_T - 0.5, LED_Z),
-        FreeCAD.Vector(0, 1, 0)
+        FreeCAD.Vector(-0.5, LED_TOP_Y, LED_Z),
+        FreeCAD.Vector(1, 0, 0)
     )
     led_bot = Part.makeCylinder(
         LED_DIA / 2, WALL_T + 2,
-        FreeCAD.Vector(LED_X, -0.5, LED_Z),
-        FreeCAD.Vector(0, 1, 0)
+        FreeCAD.Vector(BASE_W - WALL_T - 0.5, LED_BOT_Y, LED_Z),
+        FreeCAD.Vector(1, 0, 0)
     )
     result = result.cut(led_top)
     result = result.cut(led_bot)

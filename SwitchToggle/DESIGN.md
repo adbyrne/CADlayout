@@ -69,7 +69,8 @@ Hollow tray, open at front face (Z=12). Prints open-face-up, zero bridging.
 | Rod slot | 5×14mm | X=22.5..27.5, Y=8..22 | Vertical slot, ±4mm install tolerance |
 | Cable hole | Ø5mm | X=25, Y=28 | LED wires |
 | M3 mount × 4 | Ø3.4mm | (5,5)(5,45)(45,5)(45,45) | Fascia corner screws |
-| LED holes | Ø5.2mm | X=25, Z=9 | Top wall (Y=48..50) + bottom wall (Y=0..2) |
+| LED top | Ø5.2mm | Left wall (X=0..2), Y=45, Z=9 | Near top-left corner, faces left |
+| LED bottom | Ø5.2mm | Right wall (X=48..50), Y=5, Z=9 | Near bottom-right corner, faces right |
 | Alignment pegs | Ø2mm × 1.5mm | (5,1)(45,1)(5,49)(45,49) | On front rim |
 
 ### FrontPlate — 50 × 50 × 3mm
@@ -162,7 +163,8 @@ Resistors at control panel end — adjust brightness without disturbing toggle.
 | Pivot world position | X=25, Y=25, Z=19 |
 | Rod slot (shell + plate) | 5×14mm, X=22.5..27.5, Y=8..22 |
 | Cable hole | Ø5mm, X=25, Y=28, back wall |
-| LED holes | Ø5.2mm, X=25, top/bottom walls, Z=9 |
+| LED top | Ø5.2mm, left wall X=0..2, Y=45, Z=9 |
+| LED bottom | Ø5.2mm, right wall X=48..50, Y=5, Z=9 |
 | M3 mount holes | Ø3.4mm, (5,5)(5,45)(45,5)(45,45) |
 | Lever | 20mm W × 35mm H × 6mm T |
 | Cylinder | Ø8mm × 20mm, center at Y=17.5, Z=2 |
@@ -186,6 +188,7 @@ Resistors at control panel end — adjust brightness without disturbing toggle.
 | 7 | Both LEDs red | Single color, one lit at a time |
 | 8 | 4×M3 corner screws for fascia mount | Simple v1 fastening |
 | 9 | Lever print orientation | Flip 180° in slicer (operator face on bed) |
+| 10 | LED diagonal placement (v6) | Top-left + bottom-right: LEDs face opposite sides, clear route indication without obscuring fascia center |
 
 ---
 
@@ -195,4 +198,4 @@ See `PLAN_v2.md`.
 
 ---
 
-*Created: 2026-03-16 | v5 CAD: 2026-03-17*
+*Created: 2026-03-16 | v5 CAD: 2026-03-17 | v6 CAD: 2026-03-18*
