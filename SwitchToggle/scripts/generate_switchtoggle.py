@@ -53,8 +53,8 @@ WALL_T      =  2.0   # wall thickness on all sides
 # --- LED holes in shell side walls (v6: top-left, bottom-right diagonal) ---
 LED_DIA   =  5.2
 LED_Z     =  9.0   # Z depth in shell (3mm from front rim)
-LED_TOP_Y = 45.0   # top LED: left wall (X=0..2), near top edge
-LED_BOT_Y =  5.0   # bottom LED: right wall (X=48..50), near bottom edge
+LED_TOP_Y = 38.0   # top LED: left wall (X=0..2); M3 at Y=45 clears by 7mm (min 6.3mm)
+LED_BOT_Y = 12.0   # bottom LED: right wall (X=48..50); M3 at Y=5 clears by 7mm
 
 # --- Shell back face features ---
 # Rod slot (replaces two round holes from v4)
