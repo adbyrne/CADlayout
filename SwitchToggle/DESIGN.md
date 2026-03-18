@@ -10,13 +10,13 @@ via a Sullivan Gold-N-Rod #504 R/C Bowden cable with 2-56 threaded rod ends.
 The SwitchToggle mounts on the 1/8" plastic fascia surface via four M3 corner screws.
 The outer R/C cable sheath is fixed in the module foam; only the inner 2-56 threaded
 rod slides. The operator pushes the lever paddle up or down to drive the rod 5mm and
-throw the BluePoint. Two red 5mm LEDs in the shell top/bottom walls indicate which
+throw the BluePoint. Two red 5mm LEDs in the shell side walls (top-left and bottom-right) indicate which
 route is set (one LED lit at a time). Wiring exits through the back face via a 5mm
 cable hole.
 
 ---
 
-## Three-Part Design (v5 — current)
+## Three-Part Design (v6 — current)
 
 | Part | Qty | Description |
 |------|-----|-------------|
@@ -26,14 +26,14 @@ cable hole.
 | M2 pivot pin | 1 | M2×25mm bolt or 2mm rod through posts + cylinder |
 | 2-56 stud | 1 | Short cut section of 2-56 rod (~10mm) |
 | 2-56 nut | 1 | Pre-assembled on stud; slides into T-slot from bottom |
-| 5mm LED (red) | 2 | One in top wall, one in bottom wall |
+| 5mm LED (red) | 2 | Left wall near top (Y=38), right wall near bottom (Y=12) |
 | JST-XH 2.5mm 3-pin plug | 1 | LED1, LED2, GND — at control panel end |
 | JST-XH 2.5mm 3-pin socket | 1 | On LED cable at SwitchToggle end |
 | Resistor (470Ω) | 1 | At control panel end |
 | M3×? screw | 4 | Corner fascia mount |
 
 **Assembly sequence:**
-1. Install LEDs through shell top/bottom wall holes (press fit or glue)
+1. Install LEDs through shell side wall holes — top LED in left wall (Y=38), bottom LED in right wall (Y=12) — press fit or glue
 2. Route LED wires through shell interior; exit through 5mm cable hole in back wall
 3. Crimp JST-XH socket onto LED cable
 4. Place FrontPlate onto shell (alignment pegs register it); glue with CA
@@ -198,4 +198,20 @@ See `PLAN_v2.md`.
 
 ---
 
-*Created: 2026-03-16 | v5 CAD: 2026-03-17 | v6 CAD: 2026-03-18*
+## Reference Screenshots (`docs/`)
+
+| File | Shows |
+|------|-------|
+| `assembly_isometric.png` | Full three-part assembly, isometric |
+| `assembly_side.png` | Assembly side view — lever cylinder + post relationship |
+| `shell_back.png` | Shell back face — rod slot, cable hole, M3 holes |
+| `shell_left.png` | Shell left side — top LED hole in left wall (Y=38) |
+| `shell_right.png` | Shell right side — bottom LED hole in right wall (Y=12) |
+| `frontplate_front.png` | FrontPlate front face — posts, pin holes, rod clearance slot |
+| `lever_isometric.png` | Lever — T-slot entry visible |
+| `lever_back.png` | Lever — smooth operator face |
+| `lever_fascia.png` | Lever — cylinder protrusion + T-slot profile |
+
+---
+
+*Created: 2026-03-16 | v5 CAD: 2026-03-17 | v6 CAD (baseline): 2026-03-18*

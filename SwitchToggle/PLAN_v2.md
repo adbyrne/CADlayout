@@ -1,19 +1,20 @@
 # SwitchToggle v2 — Improvement Plan
 
-*Prepared: 2026-03-16. Updated: 2026-03-17 to reflect v5 baseline.*
-*Assumes v5 test print (cylinder fulcrum / T-slot lever) is mechanically acceptable.*
+*Prepared: 2026-03-16. Updated: 2026-03-18 to reflect v6 baseline.*
+*Assumes v6 test print is mechanically acceptable.*
 *Prioritized: High = functional improvement; Medium = quality/polish; Low = nice-to-have.*
 
-## Completed in v5 (not in scope for v2)
+## Completed in v5/v6 (not in scope for v2)
 
-| Item | Resolved in v5 |
-|------|---------------|
-| Lever width matches post gap | Lever 20mm wide, 1mm clearance each side of 22mm gap |
-| Cylinder fulcrum | Ø8mm cylinder runs X-axis through lever center (Y=17.5) |
-| Single rod slot | 5×14mm vertical slot replaces dual round holes; unit rotatable for orientation |
-| T-slot rod connection | Pre-assembled stud+nut slides in from Y=0 edge; nut captive |
-| Rod slot in FrontPlate | Matches shell slot (5×14mm, X=22.5..27.5, Y=8..22) |
-| Print orientation note | Lever must flip 180° around X-axis in PrusaSlicer |
+| Item | Resolved |
+|------|---------|
+| Lever width matches post gap | v5: 20mm wide, 1mm clearance each side of 22mm gap |
+| Cylinder fulcrum | v5: Ø8mm cylinder runs X-axis through lever center (Y=17.5) |
+| Single rod slot | v5: 5×14mm vertical slot replaces dual round holes |
+| T-slot rod connection | v5: Pre-assembled stud+nut slides in from Y=0 edge; nut captive |
+| Rod slot in FrontPlate | v5: Matches shell slot (5×14mm, X=22.5..27.5, Y=8..22) |
+| Print orientation note | v5: Lever must flip 180° around X-axis in PrusaSlicer |
+| LED diagonal placement | v6: Top LED left wall Y=38, bottom LED right wall Y=12 (7mm M3 clearance) |
 
 ---
 
