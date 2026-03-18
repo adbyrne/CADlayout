@@ -16,7 +16,7 @@ cable hole.
 
 ---
 
-## Three-Part Design (v6 — current)
+## Three-Part Design (v7 — current)
 
 | Part | Qty | Description |
 |------|-----|-------------|
@@ -71,7 +71,7 @@ Hollow tray, open at front face (Z=12). Prints open-face-up, zero bridging.
 | M3 mount × 4 | Ø3.4mm | (5,5)(5,45)(45,5)(45,45) | Fascia corner screws |
 | LED top | Ø5.2mm | Left wall (X=0..2), Y=38, Z=9 | 7mm clear of M3 at Y=45, faces left |
 | LED bottom | Ø5.2mm | Right wall (X=48..50), Y=12, Z=9 | 7mm clear of M3 at Y=5, faces right |
-| Alignment pegs | Ø2mm × 1.5mm | (5,1)(45,1)(5,49)(45,49) | On front rim |
+| Alignment pegs | Ø2mm × 1.0mm | (5,1)(45,1)(5,49)(45,49) | On front rim (shortened v7 to clear fillet) |
 
 ### FrontPlate — 50 × 50 × 3mm
 
@@ -214,4 +214,4 @@ See `PLAN_v2.md`.
 
 ---
 
-*Created: 2026-03-16 | v5 CAD: 2026-03-17 | v6 CAD (baseline): 2026-03-18*
+*Created: 2026-03-16 | v5 CAD: 2026-03-17 | v6 CAD (baseline): 2026-03-18 | v7 CAD (fillets): 2026-03-18*

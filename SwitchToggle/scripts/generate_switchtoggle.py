@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate SwitchToggle v6 parametric model in FreeCAD.
+"""Generate SwitchToggle v7 parametric model in FreeCAD.
 
 THREE 3D-printable parts:
 
@@ -7,10 +7,19 @@ THREE 3D-printable parts:
   FrontPlate — 50x50x3mm plate + 8mm pivot posts (closes the shell)
   Lever      — Ø8mm pivot cylinder as fulcrum (X-axis), upper thumb arm + lower rod arm
 
+Changes from v6:
+  - Geometry/quality: fillets added to all three parts
+      Shell:      R1.5mm on 4 vertical exterior corners
+      FrontPlate: R1.5mm on 4 vertical corners + R1.0mm on all 4 front-face edges
+                  + R0.5mm on post top edges
+      Lever:      R1.5mm on all 4 Z-direction corners (top and bottom)
+  - Alignment pegs shortened: PEG_H 1.5→1.0mm, PEG_HOLE_DEPTH 2.0→1.0mm
+      (required to clear the R1.0mm fillet zone on FrontPlate front face edges)
+
 Changes from v5:
   - LED holes moved from top/bottom walls to side walls (diagonal placement)
-      Top LED:    left wall (X=0..2),  Y=45 (near top edge)
-      Bottom LED: right wall (X=48..50), Y=5  (near bottom edge)
+      Top LED:    left wall (X=0..2),  Y=38 (7mm clear of M3 at Y=45)
+      Bottom LED: right wall (X=48..50), Y=12 (7mm clear of M3 at Y=5)
 
 Changes from v4:
   - Lever: wider (20mm), taller (35mm total)
@@ -37,6 +46,21 @@ Requires: FreeCAD 1.0.x with Part and MeshPart modules
 """
 
 import os
+
+
+def _try_fillet(shape, radius, edges, label=""):
+    """Apply makeFillet; return original shape with a warning on failure."""
+    if not edges:
+        print(f"  fillet({label}): no edges matched, skipping")
+        return shape
+    try:
+        result = shape.makeFillet(radius, edges)
+        print(f"  fillet({label}): R{radius}mm on {len(edges)} edges OK")
+        return result
+    except Exception as ex:
+        print(f"  fillet({label}): FAILED ({ex}), skipping")
+        return shape
+
 
 # =============================================================================
 # PARAMETERS
@@ -74,9 +98,9 @@ MOUNT_CORNERS = [(5.0, 5.0), (5.0, 45.0), (45.0, 5.0), (45.0, 45.0)]
 
 # --- Alignment pegs ---
 PEG_DIA        = 2.0
-PEG_H          = 1.5
+PEG_H          = 1.0   # reduced from 1.5: hole top moves to Z=1.5, clears R=1.0 front-face fillet
 PEG_HOLE_DIA   = 2.1
-PEG_HOLE_DEPTH = 2.0
+PEG_HOLE_DEPTH = 1.0   # reduced from 2.0: hole from Z=-0.5 to Z=1.5 (fillet zone Z=2..3 is clear)
 PEG_POSITIONS  = [(5.0, 1.0), (45.0, 1.0), (5.0, 49.0), (45.0, 49.0)]
 
 # --- FrontPlate (Part B) ---
@@ -191,6 +215,15 @@ def build_shell():
 
     result = result.removeSplitter()
 
+    # --- Fillets ---
+    # 4 vertical exterior corner edges only — back face stays sharp (fascia mount)
+    _vc = [e for e in result.Edges
+           if hasattr(e.Curve, 'Direction')
+           and abs(abs(e.Curve.Direction.z) - 1.0) < 0.05
+           and any(abs(e.CenterOfMass.x - cx) < 0.5 and abs(e.CenterOfMass.y - cy) < 0.5
+                   for cx, cy in [(0, 0), (BASE_W, 0), (0, BASE_H), (BASE_W, BASE_H)])]
+    result = _try_fillet(result, 1.5, _vc, "shell vert corners")
+
     sc = len(result.Solids)
     if sc != 1:
         print(f"WARNING: Shell has {sc} solids (expected 1)")
@@ -250,6 +283,36 @@ def build_front_plate():
         result = result.cut(hole)
 
     result = result.removeSplitter()
+
+    # --- Fillets ---
+    # Back face (Z=0) stays sharp — glued to shell rim.
+    # All plate outer edges in one fillet call — FreeCAD resolves shared corner vertices.
+    # Peg holes now stop at Z=1.5 (PEG_HOLE_DEPTH reduced), so fillet zone Z=2..3 is clear.
+    # R=1.5mm corners to match shell; R=1.0mm front face edges (different call to avoid conflict).
+    # Z-direction corner edges (full plate height Z=0..PLATE_T)
+    _vc = [e for e in result.Edges
+           if hasattr(e.Curve, 'Direction')
+           and abs(abs(e.Curve.Direction.z) - 1.0) < 0.05
+           and abs(e.CenterOfMass.z - PLATE_T / 2) < PLATE_T / 2 + 0.1
+           and any(abs(e.CenterOfMass.x - cx) < 0.5 and abs(e.CenterOfMass.y - cy) < 0.5
+                   for cx, cy in [(0, 0), (BASE_W, 0), (0, BASE_H), (BASE_W, BASE_H)])]
+    result = _try_fillet(result, 1.5, _vc, "plate vert corners")
+    # All 4 front face (Z=PLATE_T) perimeter edges — peg holes no longer reach this zone
+    _pf = [e for e in result.Edges
+           if hasattr(e.Curve, 'Direction')
+           and abs(e.Curve.Direction.z) < 0.05
+           and abs(e.CenterOfMass.z - PLATE_T) < 0.2
+           and (abs(e.CenterOfMass.x) < 0.5 or abs(e.CenterOfMass.x - BASE_W) < 0.5
+                or abs(e.CenterOfMass.y) < 0.5 or abs(e.CenterOfMass.y - BASE_H) < 0.5)]
+    result = _try_fillet(result, 1.0, _pf, "plate front edges")
+
+    # Post top face edges (Z = PLATE_T + POST_H)
+    _pt = [e for e in result.Edges
+           if hasattr(e.Curve, 'Direction')
+           and abs(e.Curve.Direction.z) < 0.05
+           and abs(e.CenterOfMass.z - (PLATE_T + POST_H)) < 0.2
+           and abs(e.CenterOfMass.y - POST_Y_CENTER) < POST_D / 2 + 0.5]
+    result = _try_fillet(result, 0.5, _pt, "post tops")
 
     sc = len(result.Solids)
     if sc != 1:
@@ -311,6 +374,17 @@ def build_lever():
     result = result.cut(nut_pocket)
 
     result = result.removeSplitter()
+
+    # --- Fillets ---
+    # All 4 Z-direction corner edges (top Y=LEV_H and bottom Y=0).
+    # Top face / bottom face X-direction edges skipped — share vertices with cylinder junction.
+    # T-slot is center-only; corners at X=0 and X=LEV_W are clear at both ends.
+    _tc = [e for e in result.Edges
+           if hasattr(e.Curve, 'Direction')
+           and abs(abs(e.Curve.Direction.z) - 1.0) < 0.05
+           and (abs(e.CenterOfMass.y - LEV_H) < 0.5 or abs(e.CenterOfMass.y) < 0.5)
+           and (abs(e.CenterOfMass.x) < 0.5 or abs(e.CenterOfMass.x - LEV_W) < 0.5)]
+    result = _try_fillet(result, 1.5, _tc, "lever corners")
 
     sc = len(result.Solids)
     if sc != 1:
