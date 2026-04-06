@@ -1,45 +1,98 @@
 # Servo
 
-3D-printable servo mount designs for model railroad layout control. Contains FreeCAD projects for different servo mounting applications.
+3D-printable servo bracket designs for the Train Order signal mechanism on the model
+railroad layout. Two micro-servos mount side-by-side above the roadbed; their arms drive
+signal arms via Bowden-cable wires through the base mast hole.
 
 ## Parts
 
-- **SwitchServo** — Servo mount for turnout/switch control
-- **TrainOrderServo** — Original servo mount for train order signal mechanism (straddles roadbed edge)
-- **TrainOrderServoInLine** — Compact variant with both servo brackets and PCA9685 tabs on the same side of the mast hole (nothing under the tracks). Two mirrored versions in one FCStd file:
-  - `Body` — PCA9685 tabs to the right of the servo brackets
-  - `Body_Flipped` — PCA9685 tabs to the left of the servo brackets (mirrored across YZ plane)
+### TrainOrderServoInLine v2 — full assembly with PCA9685 board
 
-## Quick Start
+| Body | Board position | Base footprint |
+|------|---------------|----------------|
+| `Body` | +X side of brackets | 150 × 42 mm |
+| `Body_Flipped` | −X side (mirrored) | 150 × 42 mm |
+| `BodyBoardBehind` | −Y direction (compact) | 80 × 47 mm |
 
-### Print Settings
+**Body (board +X)**
+![InLine Body isometric](docs/inline_body.png)
+
+**Body_Flipped (board −X)**
+![InLine Body_Flipped isometric](docs/inline_body_flipped.png)
+
+**BodyBoardBehind (board −Y)**
+![InLine BodyBoardBehind isometric](docs/inline_board_behind.png)
+
+---
+
+### TrainOrderServoBracketsOnly v1 — two brackets, no board
+
+For installations where the PCA9685 is mounted elsewhere. Mast hole and wire access
+hole retained. Base 80 × 27 mm.
+
+![BracketsOnly isometric](docs/brackets_only.png)
+
+---
+
+### TrainOrderServoSingleBracket v1 — one bracket
+
+Single-signal installations. Mast hole retained. Base 55 × 27 mm.
+
+![SingleBracket isometric](docs/single_bracket.png)
+
+---
+
+### Legacy: TrainOrderServoInLine v1
+
+Original manual PartDesign file (`freecad/TrainOrderServoInLine.FCStd`). Both brackets
+at the same Y position — arm interference bug present. Kept for reference only.
+
+## Key fix in v2
+
+Bracket 2 is shifted **+4 mm in Y** so the servo arms sweep in separate planes
+(2.5 mm clearance between 1.5 mm-thick arms).
+
+## Print Settings
+
 | Setting | Value |
 |---------|-------|
 | Material | PLA |
 | Printer | Prusa Core One |
 | Supports | None |
+| Infill | ≥ 20% |
 
 ## Project Structure
 
 ```
 Servo/
-├── README.md              # This file
-├── freecad/               # FreeCAD source files
-│   ├── SwitchServo.FCStd
-│   ├── TrainOrderServo.FCStd
-│   └── TrainOrderServoInLine.FCStd   # Contains Body + Body_Flipped
-├── images/                # Reference drawings
-│   ├── base_print.pdf
-│   ├── bottom_print.pdf
-│   └── servo_print.pdf
-└── printed_files/         # STL, 3MF, and slicer exports
-    ├── TrainOrderServo-Pad003 (Meshed).stl
-    ├── TrainOrderServo-Pad003 (Meshed).3mf
-    ├── TrainOrderServo-Pad003 (Meshed)_0.4n_0.2mm_PLA_MK4S_59m.bgcode
-    ├── TrainOrderServoInLine (Meshed).stl
-    └── TrainOrderServoInLine_Flipped (Meshed).stl
+├── README.md
+├── DESIGN.md                          # geometry reference + variant descriptions
+├── .claude/CLAUDE.md                  # project context for Claude sessions
+├── docs/                              # ISO screenshots
+│   ├── inline_body.png
+│   ├── inline_body_flipped.png
+│   ├── inline_board_behind.png
+│   ├── brackets_only.png
+│   └── single_bracket.png
+├── freecad/                           # FreeCAD source files
+│   ├── TrainOrderServoInLine_v2.FCStd
+│   ├── TrainOrderServoBracketsOnly_v1.FCStd
+│   ├── TrainOrderServoSingleBracket_v1.FCStd
+│   └── TrainOrderServoInLine.FCStd    # legacy v1
+├── scripts/
+│   └── generate_trainorderservo.py   # parametric generator (Part module)
+├── printed_files/                     # STL exports
+└── images/                            # legacy reference drawings
+```
+
+## Regenerating
+
+```bash
+# From FreeCAD MCP bridge — overwrites all v2 FCStd files and STLs:
+exec(open("scripts/generate_trainorderservo.py").read())
+run("/home/abyrne/Projects/Trains/CADlayout/Servo")
 ```
 
 ## License
 
-GNU General Public License v3.0 - see repository root.
+GNU General Public License v3.0
