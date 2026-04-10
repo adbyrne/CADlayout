@@ -2,6 +2,8 @@
 
 3D-printable power distribution box for a model railroad layout module.
 
+![PowerBox ISO view](images/powerbox_iso.png)
+
 ## Parts
 
 - **PowerBox-Pad003** — Main box body

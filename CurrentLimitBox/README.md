@@ -2,6 +2,8 @@
 
 3D-printable mounting box for DCC current-limiting components on a model railroad layout module. Installs into foam under the layout with an angled tab that makes the indicator bulb and power switch visible from below.
 
+![CurrentLimitBox ISO view](images/currentlimitbox_iso.png)
+
 ## Components Held
 
 - **1156 (BA15S) taillight bulb** - current limiter / indicator (friction-fit in angled tab)

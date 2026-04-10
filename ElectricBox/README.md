@@ -2,6 +2,8 @@
 
 3D-printable parametric box for mounting barrier/terminal strip connectors on a model railroad layout. Generated in four slot-count variants from a single FreeCAD model.
 
+![ElectricBox ISO view](images/electricbox_iso.png)
+
 ## Parts
 
 - **ElectricBox2Slot** — 2-position terminal strip mount

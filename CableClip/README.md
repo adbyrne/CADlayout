@@ -2,6 +2,8 @@
 
 3D-printable cable clip for managing wiring on a model railroad layout. Includes a standard body and an extended body variant for larger cable bundles.
 
+![CableClip ISO view](images/cableclip_iso.png)
+
 ## Parts
 
 - **CableClip-Body** — Standard cable clip

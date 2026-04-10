@@ -2,6 +2,8 @@
 
 Two-part 3D-printable bracket system (PETG) to hold premade spline roadbed and attach it to a layout module edge. Uses a single 6.35mm (1/4") vertical bolt through the spline, holder, and bracket. A triangular tongue-and-groove interface prevents rotation.
 
+![SplineBracket ISO view](images/splinebracket_iso.png)
+
 ## Parts
 
 - **Spline Holder** — Block with trapezoid groove that cradles the spline roadbed. V-tongue on bottom for anti-rotation.
