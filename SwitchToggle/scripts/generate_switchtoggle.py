@@ -1,46 +1,35 @@
 #!/usr/bin/env python3
-"""Generate SwitchToggle v7 parametric model in FreeCAD.
+"""Generate SwitchToggle v8 parametric model in FreeCAD.
 
-THREE 3D-printable parts:
+FOUR 3D-printable parts:
 
   Shell      — 50x50x12mm hollow tray, open front face (electronics access)
-  FrontPlate — 50x50x3mm plate + 8mm pivot posts (closes the shell)
-  Lever      — Ø8mm pivot cylinder as fulcrum (X-axis), upper thumb arm + lower rod arm
+  FrontPlate — 50x50x3mm plate + two 4x4mm mortise pockets (no integral posts)
+  Lever      — Ø8mm pivot cylinder with Ø4mm stub axles at each end (no pin hole)
+  PivotClip  — press-fit into FrontPlate mortise; snap-captures lever stub (print x2)
 
-Changes from v6:
-  - Geometry/quality: fillets added to all three parts
-      Shell:      R1.5mm on 4 vertical exterior corners
-      FrontPlate: R1.5mm on 4 vertical corners + R1.0mm on all 4 front-face edges
-                  + R0.5mm on post top edges
-      Lever:      R1.5mm on all 4 Z-direction corners (top and bottom)
-  - Alignment pegs shortened: PEG_H 1.5→1.0mm, PEG_HOLE_DEPTH 2.0→1.0mm
-      (required to clear the R1.0mm fillet zone on FrontPlate front face edges)
+Changes from v7:
+  - Fulcrum redesign: M2 pivot pin eliminated; no external hardware required
+      Lever:       pin hole removed; Ø4mm×5mm stub axles added at each cylinder end
+      FrontPlate:  integral 4×4×8mm posts removed; 4×4mm through-mortise pockets added
+      PivotClip:   new 4th printed part (print x2):
+                     body 4×6×8mm sits proud of plate (6mm Y for snap wall material)
+                     tang 3.9×3.9×3mm press-fits into FrontPlate mortise
+                     Ø4.2mm bore through X at body centre captures lever stub
+                     3.5mm entry slot (< Ø4mm stub → snap feel) at body base
 
-Changes from v5:
-  - LED holes moved from top/bottom walls to side walls (diagonal placement)
-      Top LED:    left wall (X=0..2),  Y=38 (7mm clear of M3 at Y=45)
-      Bottom LED: right wall (X=48..50), Y=12 (7mm clear of M3 at Y=5)
+Assembly (v8):
+  1. Position lever with stubs pointing left and right
+  2. Press each PivotClip straight down over its stub — stub snaps through entry
+     slot into bore; tang seats into FrontPlate mortise (press-fit)
+  3. Proceed with normal LED install and Shell glue-up
 
-Changes from v4:
-  - Lever: wider (20mm), taller (35mm total)
-  - Lever pivot is now a Ø8mm cylinder running X-axis as the fulcrum
-      upper arm (21mm) rises above cylinder for thumb grip
-      lower arm (6mm) drops below cylinder for rod connection
-      cylinder protrudes 1mm each side of arm — symmetric fulcrum feature
-  - Rod connection: blind Z-direction hole + nut slot in lower arm bottom face
-      nut hidden behind 2mm front wall; nut slots in from Y=0 bottom edge
-  - Shell: two round rod holes replaced by single vertical slot (5x14mm, Y=8..22)
-      gives installer ±4mm vertical positioning tolerance
-  - FrontPlate: matching rod clearance slot added
-  - Cable hole: 5mm dia (same as rod slot width) — wires + rod same hole size
+Replacement: press new clip down over stub; no shell disassembly required.
 
-Key geometry:
-  - Pivot cylinder center at world Y=25, world Z=19 (mid-post)
-  - Arm = 10mm (cylinder center to rod hole); 5mm travel → 30° swing
-  - Rod hole at world Y=17.5 (lower arm center, within rod slot Y=8..22)
-  - Cylinder Ø8mm centered in Y (equal 13.5mm arms each side), 2mm proud at front face
-
-Assembly: Shell (Z=0..12) + FrontPlate (Z=12..15) + Posts (Z=15..23) + Lever arms (Z=15..21)
+Key geometry (unchanged from v7):
+  - Pivot bore centre at world Y=25, world Z=19
+  - Clip bores: world X=10..14 (left) and X=36..40 (right)
+  - Lever stubs: world X=10..15 (left) and X=35..40 (right)
 
 Requires: FreeCAD 1.0.x with Part and MeshPart modules
 """
@@ -74,73 +63,70 @@ BASE_H = 50.0   # Y: height
 SHELL_DEPTH = 12.0   # Z: back face Z=0, open front face at Z=12
 WALL_T      =  2.0   # wall thickness on all sides
 
-# --- LED holes in shell side walls (v6: top-left, bottom-right diagonal) ---
+# --- LED holes in shell side walls (top-left, bottom-right diagonal) ---
 LED_DIA   =  5.2
-LED_Z     =  9.0   # Z depth in shell (3mm from front rim)
-LED_TOP_Y = 38.0   # top LED: left wall (X=0..2); M3 at Y=45 clears by 7mm (min 6.3mm)
-LED_BOT_Y = 12.0   # bottom LED: right wall (X=48..50); M3 at Y=5 clears by 7mm
+LED_Z     =  9.0
+LED_TOP_Y = 38.0   # top LED: left wall (X=0..2); 7mm clear of M3 at Y=45
+LED_BOT_Y = 12.0   # bottom LED: right wall (X=48..50); 7mm clear of M3 at Y=5
 
 # --- Shell back face features ---
-# Rod slot (replaces two round holes from v4)
-ROD_SLOT_W   =  5.0    # X: slot width
-ROD_SLOT_H   = 14.0    # Y: slot height
-ROD_SLOT_Y   =  8.0    # Y: slot bottom edge (top = 8+14 = 22)
-ROD_SLOT_X   = (BASE_W - ROD_SLOT_W) / 2   # = 22.5, centered
+ROD_SLOT_W   =  5.0
+ROD_SLOT_H   = 14.0
+ROD_SLOT_Y   =  8.0
+ROD_SLOT_X   = (BASE_W - ROD_SLOT_W) / 2   # = 22.5, centred
 
-# Cable hole (wires only — same 5mm as slot width)
 CABLE_DIA =  5.0
 CABLE_X   = 25.0
-CABLE_Y   = 28.0    # moved up from center to clear rod slot (slot top = Y=22)
+CABLE_Y   = 28.0
 
-# Corner mount holes
 M3_DIA = 3.4
 MOUNT_CORNERS = [(5.0, 5.0), (5.0, 45.0), (45.0, 5.0), (45.0, 45.0)]
 
 # --- Alignment pegs ---
 PEG_DIA        = 2.0
-PEG_H          = 1.0   # reduced from 1.5: hole top moves to Z=1.5, clears R=1.0 front-face fillet
+PEG_H          = 1.0
 PEG_HOLE_DIA   = 2.1
-PEG_HOLE_DEPTH = 1.0   # reduced from 2.0: hole from Z=-0.5 to Z=1.5 (fillet zone Z=2..3 is clear)
+PEG_HOLE_DEPTH = 1.0
 PEG_POSITIONS  = [(5.0, 1.0), (45.0, 1.0), (5.0, 49.0), (45.0, 49.0)]
 
 # --- FrontPlate (Part B) ---
 PLATE_T       =  3.0
-POST_W        =  4.0
-POST_D        =  4.0
-POST_H        =  8.0
-POST_LEFT_X   = 10.0
-POST_RIGHT_X  = 36.0
+POST_W        =  4.0   # mortise X width (= old post width)
+POST_D        =  4.0   # mortise Y depth (= old post depth)
+POST_H        =  8.0   # clip body height above plate
+POST_LEFT_X   = 10.0   # left post/clip/mortise left edge
+POST_RIGHT_X  = 36.0   # right post/clip/mortise left edge
 POST_Y_CENTER = 25.0
-PIN_DIA       =  2.2
+
+# --- PivotClip (Part D, print x2) ---
+STUB_DIA      =  4.0   # lever stub diameter
+STUB_LEN      =  5.0   # stub length from lever face (1mm gap + 4mm into bore)
+CLIP_BORE_DIA =  4.2   # bore through clip body (running fit on stub)
+CLIP_BODY_Y   =  6.0   # clip body Y width (wider than mortise for snap walls)
+CLIP_SNAP_W   =  3.5   # entry slot width in Y (< STUB_DIA → snap feel on install)
+CLIP_TANG_W   =  3.9   # tang X/Y (press-fits into MORTISE_W pocket; tune ±0.1mm)
+MORTISE_W     =  4.0   # through-pocket in FrontPlate
 
 # --- Lever (Part C) ---
-LEV_W = 20.0          # X: 1mm clearance each side in 22mm post gap
-LEV_H = 35.0          # Y: total height
-LEV_T =  6.0          # Z: arm thickness
-LEV_PIVOT_Y   = LEV_H / 2   # = 17.5: cylinder centered in Y → equal arms above and below
-LEV_PIVOT_DIA =  2.2  # pin hole through cylinder
+LEV_W = 20.0
+LEV_H = 35.0
+LEV_T =  6.0
+LEV_PIVOT_Y   = LEV_H / 2   # = 17.5: equal arms above and below
 
-# Pivot cylinder (the fulcrum — runs X-axis, visible feature)
-CYL_PIVOT_DIA    =  8.0   # Ø8mm: 2mm proud at back (fascia side), flush at front operator face
-CYL_PIVOT_Z_CTR  =  2.0   # local Z center: protrudes at Z=-2..0 (fascia), flush at Z=6 (operator)
-# Cylinder occupies local Y = LEV_PIVOT_Y ± CYL_PIVOT_DIA/2 = 6..14
-# Lower arm: Y=0..6  Upper arm: Y=14..35
+CYL_PIVOT_DIA   =  8.0
+CYL_PIVOT_Z_CTR =  2.0   # local Z centre: flush at back face, 2mm proud at front
 
-# T-slot in lower arm for stud+nut connection (open at Y=0 bottom edge)
-#   Narrow stud slot: 3mm wide, open at Z=0 back face → stud protrudes into shell
-#   Wide nut pocket:  5.5mm wide at Z=1..4 → nut captured, can't pass back through stud slot
-#   Front wall: Z=4..6 = 2mm solid
-#   Assembly: slide pre-assembled stud+nut in from Y=0 edge; nut retains stud
-NUT_POCKET_W   =  5.5   # X: nut corner-to-corner clearance
-NUT_POCKET_Z   =  3.0   # Z: nut pocket depth (Z=1..4)
-NUT_POCKET_Z0  =  1.0   # Z: nut pocket start (after narrow stud slot)
-STUD_SLOT_W    =  3.0   # X: narrow stud clearance (open at Z=0 back face)
-STUD_SLOT_Y    =  5.0   # Y: depth from bottom edge (same for both cuts)
+# T-slot in lower arm for stud+nut connection
+NUT_POCKET_W   =  5.5
+NUT_POCKET_Z   =  3.0
+NUT_POCKET_Z0  =  1.0
+STUD_SLOT_W    =  3.0
+STUD_SLOT_Y    =  5.0
 
-# --- Assembly placements (visual only; STLs export at origin) ---
-LEV_ASM_X = (BASE_W - LEV_W) / 2                                    # = 15.0
-LEV_ASM_Y = BASE_H / 2 - LEV_PIVOT_Y                                # = 15.0
-LEV_ASM_Z = SHELL_DEPTH + PLATE_T + POST_H/2 - CYL_PIVOT_Z_CTR     # = 17.0
+# --- Assembly placements (visual only; STLs export at part origin) ---
+LEV_ASM_X = (BASE_W - LEV_W) / 2                                # = 15.0
+LEV_ASM_Y = BASE_H / 2 - LEV_PIVOT_Y                            # =  7.5
+LEV_ASM_Z = SHELL_DEPTH + PLATE_T + POST_H / 2 - CYL_PIVOT_Z_CTR  # = 17.0
 
 # --- Export ---
 EXPORT_DIR  = "printed_files"
@@ -152,13 +138,11 @@ FREECAD_DIR = "freecad"
 # =============================================================================
 
 def build_shell():
-    """Part A: hollow tray, open front face. Single rod slot replaces two holes."""
+    """Part A: hollow tray, open front face. Unchanged from v7."""
     import FreeCAD, Part
 
-    # Outer box
     result = Part.makeBox(BASE_W, BASE_H, SHELL_DEPTH)
 
-    # Interior cavity (open at Z=SHELL_DEPTH)
     cav_w = BASE_W - 2 * WALL_T
     cav_h = BASE_H - 2 * WALL_T
     cav_d = SHELL_DEPTH - WALL_T
@@ -166,7 +150,6 @@ def build_shell():
                           FreeCAD.Vector(WALL_T, WALL_T, WALL_T))
     result = result.cut(cavity)
 
-    # LED holes in side walls (X direction): top-left and bottom-right
     led_top = Part.makeCylinder(
         LED_DIA / 2, WALL_T + 2,
         FreeCAD.Vector(-0.5, LED_TOP_Y, LED_Z),
@@ -180,14 +163,12 @@ def build_shell():
     result = result.cut(led_top)
     result = result.cut(led_bot)
 
-    # Back face: rod slot (replaces two round holes)
     rod_slot = Part.makeBox(
         ROD_SLOT_W, ROD_SLOT_H, WALL_T + 2,
         FreeCAD.Vector(ROD_SLOT_X, ROD_SLOT_Y, -0.5)
     )
     result = result.cut(rod_slot)
 
-    # Back face: cable hole (5mm, same size as slot width)
     cable_hole = Part.makeCylinder(
         CABLE_DIA / 2, WALL_T + 2,
         FreeCAD.Vector(CABLE_X, CABLE_Y, -0.5),
@@ -195,7 +176,6 @@ def build_shell():
     )
     result = result.cut(cable_hole)
 
-    # Back face: M3 corner mount holes
     for cx, cy in MOUNT_CORNERS:
         hole = Part.makeCylinder(
             M3_DIA / 2, WALL_T + 2,
@@ -204,7 +184,6 @@ def build_shell():
         )
         result = result.cut(hole)
 
-    # Alignment pegs on front rim
     for px, py in PEG_POSITIONS:
         peg = Part.makeCylinder(
             PEG_DIA / 2, PEG_H,
@@ -215,8 +194,6 @@ def build_shell():
 
     result = result.removeSplitter()
 
-    # --- Fillets ---
-    # 4 vertical exterior corner edges only — back face stays sharp (fascia mount)
     _vc = [e for e in result.Edges
            if hasattr(e.Curve, 'Direction')
            and abs(abs(e.Curve.Direction.z) - 1.0) < 0.05
@@ -231,33 +208,20 @@ def build_shell():
 
 
 def build_front_plate():
-    """Part B: 3mm plate with pivot posts and rod clearance slot."""
+    """Part B: 3mm plate with mortise pockets for PivotClips (no integral posts)."""
     import FreeCAD, Part
 
     result = Part.makeBox(BASE_W, BASE_H, PLATE_T)
 
-    # Pivot posts
-    post_left = Part.makeBox(
-        POST_W, POST_D, POST_H,
-        FreeCAD.Vector(POST_LEFT_X,  POST_Y_CENTER - POST_D / 2, PLATE_T)
-    )
-    post_right = Part.makeBox(
-        POST_W, POST_D, POST_H,
-        FreeCAD.Vector(POST_RIGHT_X, POST_Y_CENTER - POST_D / 2, PLATE_T)
-    )
-    result = result.fuse(post_left)
-    result = result.fuse(post_right)
+    # Through-mortise pockets for clip tangs (centred on old post footprints)
+    for post_cx in [POST_LEFT_X + POST_W / 2, POST_RIGHT_X + POST_W / 2]:
+        mortise = Part.makeBox(
+            MORTISE_W, MORTISE_W, PLATE_T + 2,
+            FreeCAD.Vector(post_cx - MORTISE_W / 2, POST_Y_CENTER - MORTISE_W / 2, -0.5)
+        )
+        result = result.cut(mortise)
 
-    # Pin hole (X direction through both posts)
-    pin_z = PLATE_T + POST_H / 2
-    pin_hole = Part.makeCylinder(
-        PIN_DIA / 2, BASE_W + 2,
-        FreeCAD.Vector(-1, POST_Y_CENTER, pin_z),
-        FreeCAD.Vector(1, 0, 0)
-    )
-    result = result.cut(pin_hole)
-
-    # Rod clearance slot (matches shell slot position)
+    # Rod clearance slot (matches shell slot)
     rod_slot = Part.makeBox(
         ROD_SLOT_W, ROD_SLOT_H, PLATE_T + 2,
         FreeCAD.Vector(ROD_SLOT_X, ROD_SLOT_Y, -0.5)
@@ -273,7 +237,7 @@ def build_front_plate():
         )
         result = result.cut(hole)
 
-    # M3 clearance holes at corners
+    # M3 corner clearance holes
     for cx, cy in MOUNT_CORNERS:
         hole = Part.makeCylinder(
             M3_DIA / 2, PLATE_T + 2,
@@ -284,12 +248,7 @@ def build_front_plate():
 
     result = result.removeSplitter()
 
-    # --- Fillets ---
-    # Back face (Z=0) stays sharp — glued to shell rim.
-    # All plate outer edges in one fillet call — FreeCAD resolves shared corner vertices.
-    # Peg holes now stop at Z=1.5 (PEG_HOLE_DEPTH reduced), so fillet zone Z=2..3 is clear.
-    # R=1.5mm corners to match shell; R=1.0mm front face edges (different call to avoid conflict).
-    # Z-direction corner edges (full plate height Z=0..PLATE_T)
+    # Fillets — corners and front face edges (no post-top fillet in v8)
     _vc = [e for e in result.Edges
            if hasattr(e.Curve, 'Direction')
            and abs(abs(e.Curve.Direction.z) - 1.0) < 0.05
@@ -297,7 +256,7 @@ def build_front_plate():
            and any(abs(e.CenterOfMass.x - cx) < 0.5 and abs(e.CenterOfMass.y - cy) < 0.5
                    for cx, cy in [(0, 0), (BASE_W, 0), (0, BASE_H), (BASE_W, BASE_H)])]
     result = _try_fillet(result, 1.5, _vc, "plate vert corners")
-    # All 4 front face (Z=PLATE_T) perimeter edges — peg holes no longer reach this zone
+
     _pf = [e for e in result.Edges
            if hasattr(e.Curve, 'Direction')
            and abs(e.Curve.Direction.z) < 0.05
@@ -306,14 +265,6 @@ def build_front_plate():
                 or abs(e.CenterOfMass.y) < 0.5 or abs(e.CenterOfMass.y - BASE_H) < 0.5)]
     result = _try_fillet(result, 1.0, _pf, "plate front edges")
 
-    # Post top face edges (Z = PLATE_T + POST_H)
-    _pt = [e for e in result.Edges
-           if hasattr(e.Curve, 'Direction')
-           and abs(e.Curve.Direction.z) < 0.05
-           and abs(e.CenterOfMass.z - (PLATE_T + POST_H)) < 0.2
-           and abs(e.CenterOfMass.y - POST_Y_CENTER) < POST_D / 2 + 0.5]
-    result = _try_fillet(result, 0.5, _pt, "post tops")
-
     sc = len(result.Solids)
     if sc != 1:
         print(f"WARNING: FrontPlate has {sc} solids (expected 1)")
@@ -321,28 +272,21 @@ def build_front_plate():
 
 
 def build_lever():
-    """Part C: Ø8mm pivot cylinder as X-axis fulcrum, upper thumb arm, lower rod arm.
+    """Part C: Ø8mm pivot cylinder with Ø4mm stub axles; upper thumb arm, lower rod arm.
 
-    Structure:
-      Upper arm (Y=14..35, Z=0..6): thumb grip paddle
-      Pivot cylinder (center Y=10, Z=4): Ø8mm × 20mm along X-axis
-          flush at back face (Z=0), protrudes 2mm at front (Z=8) — visible fulcrum
-      Lower arm (Y=0..6, Z=0..6): rod connection area
-          rod hole: blind Z-direction from back face at Y=3
-          nut slot: from bottom face (Y=0), hidden behind 2mm front wall
+    v8: pin hole removed; Ø4mm×5mm stubs at each cylinder end captured by PivotClips.
+    Stubs protrude outward in X (left stub X=-5..0, right stub X=20..25 in local coords).
     """
     import FreeCAD, Part
 
-    cyl_r   = CYL_PIVOT_DIA / 2   # = 4.0
-    cyl_y   = LEV_PIVOT_Y          # = 10.0 (local Y center of cylinder)
-    cyl_z   = CYL_PIVOT_Z_CTR      # = 4.0  (local Z center)
+    cyl_r = CYL_PIVOT_DIA / 2   # = 4.0
+    cyl_y = LEV_PIVOT_Y          # = 17.5
+    cyl_z = CYL_PIVOT_Z_CTR      # = 2.0
 
-    # Full-height arm plate — single box spanning entire lever height
-    # Cylinder is fused on top; clean single-solid result
+    # Full-height arm plate
     result = Part.makeBox(LEV_W, LEV_H, LEV_T)
 
-    # Pivot cylinder — Ø8mm × 20mm, axis +X, centered at (Y=10, Z=4)
-    # Extends Z=0..8: flush at back face, 2mm proud at front face
+    # Pivot cylinder — Ø8mm × 20mm, axis +X
     pivot_cyl = Part.makeCylinder(
         cyl_r, LEV_W,
         FreeCAD.Vector(0, cyl_y, cyl_z),
@@ -350,23 +294,27 @@ def build_lever():
     )
     result = result.fuse(pivot_cyl)
 
-    # Pin hole through cylinder center (X direction)
-    pin_hole = Part.makeCylinder(
-        LEV_PIVOT_DIA / 2, LEV_W + 2,
-        FreeCAD.Vector(-1, cyl_y, cyl_z),
+    # Stub axles (v8): Ø4mm × 5mm protruding outward from each cylinder end
+    left_stub = Part.makeCylinder(
+        STUB_DIA / 2, STUB_LEN,
+        FreeCAD.Vector(-STUB_LEN, cyl_y, cyl_z),
         FreeCAD.Vector(1, 0, 0)
     )
-    result = result.cut(pin_hole)
+    right_stub = Part.makeCylinder(
+        STUB_DIA / 2, STUB_LEN,
+        FreeCAD.Vector(LEV_W, cyl_y, cyl_z),
+        FreeCAD.Vector(1, 0, 0)
+    )
+    result = result.fuse(left_stub)
+    result = result.fuse(right_stub)
 
     # T-slot: stud+nut slides in from Y=0 bottom edge
-    # Narrow stud slot (3mm) — open at back face (Z=0), stud protrudes into shell
     stud_slot = Part.makeBox(
         STUD_SLOT_W, STUD_SLOT_Y, NUT_POCKET_Z0 + 0.5,
         FreeCAD.Vector(LEV_W / 2 - STUD_SLOT_W / 2, 0, -0.5)
     )
     result = result.cut(stud_slot)
 
-    # Wide nut pocket (5.5mm) — starts at Z=NUT_POCKET_Z0, nut captured behind stud slot
     nut_pocket = Part.makeBox(
         NUT_POCKET_W, STUD_SLOT_Y, NUT_POCKET_Z,
         FreeCAD.Vector(LEV_W / 2 - NUT_POCKET_W / 2, 0, NUT_POCKET_Z0)
@@ -375,10 +323,7 @@ def build_lever():
 
     result = result.removeSplitter()
 
-    # --- Fillets ---
-    # All 4 Z-direction corner edges (top Y=LEV_H and bottom Y=0).
-    # Top face / bottom face X-direction edges skipped — share vertices with cylinder junction.
-    # T-slot is center-only; corners at X=0 and X=LEV_W are clear at both ends.
+    # Fillets on arm corners (_try_fillet skips gracefully if stub topology interferes)
     _tc = [e for e in result.Edges
            if hasattr(e.Curve, 'Direction')
            and abs(abs(e.Curve.Direction.z) - 1.0) < 0.05
@@ -389,6 +334,61 @@ def build_lever():
     sc = len(result.Solids)
     if sc != 1:
         print(f"WARNING: Lever has {sc} solids (expected 1)")
+    return result
+
+
+def build_pivot_clip():
+    """Part D (print x2): press-fit into FrontPlate mortise; snap-captures lever stub.
+
+    Local coords: Z=0 at body base (rests on FrontPlate front face).
+      Body:      POST_W × CLIP_BODY_Y × POST_H  (4×6×8mm, above plate)
+      Tang:      CLIP_TANG_W × CLIP_TANG_W × PLATE_T  (3.9×3.9×3mm, below Z=0)
+      Bore:      Ø4.2mm through X at Y=CLIP_BODY_Y/2, Z=POST_H/2
+      Entry slot: CLIP_SNAP_W wide in Y, from Z=0 to bore centre (Z=POST_H/2)
+                  Full X width; 1.25mm snap walls on each Y side.
+
+    Assembly: press clip straight down; stub squeezes through 3.5mm slot and
+    snaps into the 4.2mm bore. Tang seats in FrontPlate mortise (press-fit).
+    """
+    import FreeCAD, Part
+
+    bore_y = CLIP_BODY_Y / 2   # = 3.0 — bore Y centre in clip local
+    bore_z = POST_H / 2        # = 4.0 — bore Z centre in clip local
+
+    # Body
+    result = Part.makeBox(POST_W, CLIP_BODY_Y, POST_H)
+
+    # Tang: centred in body XY, extends below Z=0 into FrontPlate mortise
+    tang_x0 = (POST_W    - CLIP_TANG_W) / 2   # = 0.05
+    tang_y0 = (CLIP_BODY_Y - CLIP_TANG_W) / 2  # = 1.05
+    tang = Part.makeBox(
+        CLIP_TANG_W, CLIP_TANG_W, PLATE_T,
+        FreeCAD.Vector(tang_x0, tang_y0, -PLATE_T)
+    )
+    result = result.fuse(tang)
+
+    # Bore through X direction at body centre
+    bore = Part.makeCylinder(
+        CLIP_BORE_DIA / 2, POST_W + 2,
+        FreeCAD.Vector(-1, bore_y, bore_z),
+        FreeCAD.Vector(1, 0, 0)
+    )
+    result = result.cut(bore)
+
+    # Entry slot: open at body base (Z=0), runs to bore centre (Z=bore_z)
+    # Full X width so X-axis stub enters freely as clip descends.
+    # CLIP_SNAP_W in Y → 1.25mm snap walls each side → snap feel on install.
+    slot = Part.makeBox(
+        POST_W + 2, CLIP_SNAP_W, bore_z,
+        FreeCAD.Vector(-1, bore_y - CLIP_SNAP_W / 2, 0)
+    )
+    result = result.cut(slot)
+
+    result = result.removeSplitter()
+
+    sc = len(result.Solids)
+    if sc != 1:
+        print(f"WARNING: PivotClip has {sc} solids (expected 1)")
     return result
 
 
@@ -421,6 +421,24 @@ def create_document(doc_name="SwitchToggle"):
         FreeCAD.Rotation()
     )
 
+    # PivotClips: same shape, mirrored X placement
+    clip_shape = build_pivot_clip()
+    clip_asm_y = POST_Y_CENTER - CLIP_BODY_Y / 2   # = 22.0
+    clip_asm_z = SHELL_DEPTH + PLATE_T              # = 15.0
+
+    left_clip  = doc.addObject("Part::Feature", "LeftPivotClip")
+    right_clip = doc.addObject("Part::Feature", "RightPivotClip")
+    left_clip.Shape  = clip_shape
+    right_clip.Shape = clip_shape
+    left_clip.Placement = FreeCAD.Placement(
+        FreeCAD.Vector(POST_LEFT_X, clip_asm_y, clip_asm_z),
+        FreeCAD.Rotation()
+    )
+    right_clip.Placement = FreeCAD.Placement(
+        FreeCAD.Vector(POST_RIGHT_X, clip_asm_y, clip_asm_z),
+        FreeCAD.Rotation()
+    )
+
     doc.recompute()
 
     if FreeCAD.GuiUp:
@@ -428,13 +446,16 @@ def create_document(doc_name="SwitchToggle"):
         shell_obj.ViewObject.ShapeColor  = (0.4,  0.6,  1.0,  0.0)
         plate_obj.ViewObject.ShapeColor  = (0.25, 0.45, 0.85, 0.0)
         lever_obj.ViewObject.ShapeColor  = (1.0,  0.65, 0.2,  0.0)
+        left_clip.ViewObject.ShapeColor  = (0.2,  0.75, 0.35, 0.0)
+        right_clip.ViewObject.ShapeColor = (0.2,  0.75, 0.35, 0.0)
         FreeCADGui.ActiveDocument.ActiveView.fitAll()
         FreeCADGui.ActiveDocument.ActiveView.viewIsometric()
 
     print(f"Created {doc_name}: "
           f"Shell {shell_shape.Volume:.1f} mm³  "
           f"FrontPlate {plate_shape.Volume:.1f} mm³  "
-          f"Lever {lever_shape.Volume:.1f} mm³")
+          f"Lever {lever_shape.Volume:.1f} mm³  "
+          f"PivotClip {clip_shape.Volume:.1f} mm³ (×2)")
     return doc
 
 
@@ -469,6 +490,9 @@ def run(base_dir):
                       os.path.join(printed_dir, "SwitchToggle_FrontPlate (Meshed).stl"))
     export_meshed_stl(doc.getObject("Lever").Shape,
                       os.path.join(printed_dir, "SwitchToggle_Lever (Meshed).stl"))
+    # PivotClip: export once (print x2)
+    export_meshed_stl(doc.getObject("LeftPivotClip").Shape,
+                      os.path.join(printed_dir, "SwitchToggle_PivotClip (Meshed).stl"))
     print("Done!")
 
 
