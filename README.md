@@ -12,6 +12,8 @@ FreeCAD parametric designs for model railroad layout infrastructure. All compone
 | [PowerBox](PowerBox/) | Power distribution box for a layout module |
 | [Servo](Servo/) | Servo mount designs for turnout and train order signal control |
 | [SplineBracket](SplineBracket/) | Two-part bracket to hold spline roadbed and attach it to a module edge |
+| [SwitchToggle](SwitchToggle/) | Fascia-mounted seesaw lever to throw a BluePoint switch machine via Bowden cable |
+| [UP5PanelBox](UP5PanelBox/) | Mounting box for the Digitrax UP5 Universal LocoNet Panel |
 
 ## Project Structure Convention
 

@@ -12,6 +12,7 @@ Sullivan Gold-N-Rod #504 R/C Bowden cable. Two red LEDs indicate the set route.
 | Shell | 1 | 50×50×12mm hollow tray, open front face |
 | FrontPlate | 1 | 50×50×3mm plate + 8mm pivot posts |
 | Lever | 1 | 20×35×6mm paddle with Ø8mm cylinder fulcrum |
+| PivotClip | 1 | Retains M2 pivot pin in post |
 | M2×25mm pivot pin | 1 | Through posts and cylinder |
 | 2-56 stud + nut | 1 | Pre-assembled; slides into T-slot from bottom |
 | 5mm red LED | 2 | Top-left and bottom-right corners for route indication |
@@ -60,9 +61,12 @@ SwitchToggle/
 ├── images/                # ISO screenshots
 │   └── switchtoggle_iso.png
 ├── printed_files/         # STL exports
-│   ├── Shell.stl
-│   ├── FrontPlate.stl
-│   └── Lever.stl
+│   ├── SwitchToggle_Shell (Meshed).stl
+│   ├── SwitchToggle_FrontPlate (Meshed).stl
+│   ├── SwitchToggle_Lever (Meshed).stl
+│   ├── SwitchToggle_PivotClip (Meshed).stl
+│   ├── SwitchToggle_one.3mf
+│   └── SwitchToggle_two.3mf
 └── scripts/               # Parametric build script
     └── generate_switchtoggle.py
 ```
