@@ -74,6 +74,8 @@ YardmasterTerminal/
 │   └── yardmasterterminal_iso.png     # ISO screenshot
 ├── freecad/
 │   └── YardmasterTerminal.FCStd      # FreeCAD source
+├── drawings/
+│   └── YardmasterTerminal_v3.svg     # TechDraw: 9-view orthographic (scale 1:3)
 ├── printed_files/                     # Production STL exports
 │   ├── YardmasterTerminal_Bezel_v3.stl
 │   ├── YardmasterTerminal_Enclosure_v3.stl

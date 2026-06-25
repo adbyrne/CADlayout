@@ -119,6 +119,12 @@ MNT_CBORE_D  = 7.0
 MNT_CBORE_H  = 3.0
 LOCK_D       = 3.2          # M3 lock-screw bore
 
+# ── RPi3 mounting holes (bottom leg underside) ────────────────────────────
+# Standard RPi3 hole pattern: 85×56mm board, holes at [3.5,61.5]×[3.5,52.5]
+# Board centred on wedge width (56mm in X); centred along leg depth (85mm in Y)
+RPI_BORE_D   = 3.0          # M2.5 standoff clearance bore
+RPI_X0       = -56.0 / 2    # board left edge = −28.0 mm
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # BEZEL  — face-down print
@@ -363,6 +369,17 @@ def build_wedge(doc):
     lock   = Part.makeCylinder(LOCK_D/2, t + 2,
                                App.Vector(0, lock_y, -1))
     w = w.cut(lock)
+
+    # ── RPi3 mounting holes — bottom leg underside ────────────────────────────
+    # 4× M2.5 clearance bores through the 3mm bottom leg
+    rpi_y0 = (LEG - 85.0) / 2.0    # centres the 85mm board on the leg depth
+    for hx in (3.5, 61.5):
+        for hy in (3.5, 52.5):
+            h = Part.makeCylinder(RPI_BORE_D / 2, t + 2,
+                                  App.Vector(RPI_X0 + hx, rpi_y0 + hy, -1))
+            w = w.cut(h)
+    print(f"  RPi3 holes: X={[round(RPI_X0+hx,1) for hx in (3.5,61.5)]}  "
+          f"Y={[round(rpi_y0+hy,1) for hy in (3.5,52.5)]}")
 
     w = w.removeSplitter()
     top_edge = [e for e in w.Edges

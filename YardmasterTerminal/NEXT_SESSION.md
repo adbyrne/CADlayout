@@ -22,18 +22,19 @@ Once Enclosure print completes, verify:
 - M3×12 screws engage enclosure bosses (5mm thread depth, Ø2.5mm bore)
 - HOLE_DIA=3.2mm confirmed correct (2026-06-25)
 
-### 3. TechDraw SVG for drawings/ (low priority)
-`YardmasterTerminal/drawings/` is empty. Per project convention a TechDraw
-6-view SVG should live here before the project is fully closed out.
-
-### 4. RPi3 dock (main remaining CAD work)
+### 3. RPi3 dock (main remaining CAD work)
 Design a dock at the wedge's Bs (deep/bottom) corner that mounts the RPi3 board.
 
 Key constraints:
-- Attaches to the wedge **bottom leg**, near the Bs deep end
+- Attaches to the wedge **bottom leg** via the 4× RPi3 clearance holes (M2.5, Ø3.0mm,
+  added 2026-06-25): X=[-24.5, 33.5] mm, Y=[11.9, 60.9] mm (board centred on wedge)
 - Small fans on hand — plan for fan mounting holes/vents
-- Wedge bottom leg is fully solid (v3) — no existing lightening holes to work around
 - RPi3 standard hole pattern: 85×56mm board, holes at
-  (3.5,3.5)(3.5,52.5)(61.5,3.5)(61.5,52.5) Ø2.7mm (unconfirmed — measure)
-- Confirm lock-screw bore at Y=81.8mm is accessible from below once installed;
-  may need to relocate to end cap
+  (3.5,3.5)(3.5,52.5)(61.5,3.5)(61.5,52.5) Ø2.7mm (unconfirmed — measure to verify)
+- Lock-screw bore at Y=81.8mm is accessible from below; confirm this is OK once
+  dock is designed (may need clearance notch in dock)
+
+## Completed this session (2026-06-25)
+- ✅ Wedge bottom leg: 4× M2.5 clearance holes for RPi3 mounting (Ø3.0mm)
+- ✅ TechDraw SVG: `drawings/YardmasterTerminal_v3.svg` (9-view, scale 1:3)
+- ✅ Wedge STL re-exported: `YardmasterTerminal_Wedge_v3.stl`
