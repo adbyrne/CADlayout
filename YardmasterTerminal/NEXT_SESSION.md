@@ -20,7 +20,7 @@ Once Enclosure print completes, verify:
 - Connector slot is on the correct side (lower-left from front = −X in model)
 - Enclosure corner chamfers seat cleanly in wedge V-groove
 - M3×12 screws engage enclosure bosses (5mm thread depth, Ø2.5mm bore)
-- HOLE_DIA=3.2mm placeholder — confirm against physical board before final print
+- HOLE_DIA=3.2mm confirmed correct (2026-06-25)
 
 ### 3. TechDraw SVG for drawings/ (low priority)
 `YardmasterTerminal/drawings/` is empty. Per project convention a TechDraw
