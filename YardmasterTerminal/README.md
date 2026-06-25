@@ -11,7 +11,7 @@ a front bezel, a component enclosure, and a wedge bracket that sets the tilt.
 | Part | File | Description |
 |------|------|-------------|
 | **Bezel** | `YardmasterTerminal_Bezel_v3.stl` | 185×144×7mm box lid; 166×100mm display opening; "YARDMASTER" label; 4× M3 counterbores |
-| **Enclosure** | `YardmasterTerminal_Enclosure_v3.stl` | 185×144×12mm box; 4× M3 boss cylinders; connector slot on port (+X) side |
+| **Enclosure** | `YardmasterTerminal_Enclosure_v3.stl` | 185×144×13.6mm box; 4× M3 boss cylinders; connector slot on port (−X/left) side; 45° back-corner chamfers for wedge seating |
 | **Wedge** | `YardmasterTerminal_Wedge_v3.stl` | 80mm-wide 45° L-bracket; 3× fascia mounting holes; M3 lock screw |
 
 **Hardware:** 4× M3×12 socket-head screws (bezel-to-enclosure), 1× M3 lock screw
@@ -24,11 +24,11 @@ Assembly order (front → back):
 1. Place ELECROW board tabs onto the 4 bezel standoffs
 2. Seat the enclosure over the board — boss cylinders align with the standoffs
 3. Drive 4× M3×12 socket-head screws from the bezel front face into the enclosure bosses
-4. Rest the enclosure's back-bottom corner in the wedge V-groove
+4. Press the enclosure's back-bottom corner into the wedge V-groove; the 45° chamfers
+   on the enclosure's back face engage the wedge leg ends to retain it
 5. Mount the wedge back leg flush against the fascia with #6 wood screws through
    the 3 counterbored holes
-6. Tighten the M3 lock screw through the wedge bottom leg to prevent the
-   enclosure from sliding
+6. Tighten the M3 lock screw through the wedge bottom leg for final retention
 
 ## Print Settings
 
@@ -48,12 +48,14 @@ ELECROW 7" LCD Display-C, 1024×600 Pixel, USB Touch Rev3.3
 | Board body | 165×107 mm |
 | Overall (with tabs) | 165×124 mm |
 | Mounting hole spacing | 157×115 mm c-t-c |
+| Board thickness | 1.6 mm |
 | LCD panel face | 165×99 mm |
 | Panel-to-board depth | 7 mm |
 
-Ports (right/+X edge, top to bottom): Backlight switch → 2× micro-USB Touch →
-micro-HDMI Display. The connector slot in the enclosure and bezel right wall
-spans Y = 4–60 mm from the board bottom edge to clear all ports.
+Ports (right edge of board when viewed from back, lower-left when viewed from
+front/display side): Backlight switch → 2× micro-USB Touch → micro-HDMI Display.
+The connector slot in the enclosure left (−X) wall spans Y = 4–60 mm from the
+board bottom edge to clear all ports.
 
 ## Regenerate from Script
 

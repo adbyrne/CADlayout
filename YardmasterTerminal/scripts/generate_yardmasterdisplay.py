@@ -62,7 +62,7 @@ BOARD_H      = 107.0
 TAB_EXT      = 8.5          # tab protrudes beyond body top/bottom
 HOLE_X       = 157.0 / 2   # ±78.5 mm from board centre
 HOLE_Y       = 115.0 / 2   # ±57.5 mm from board centre
-BOARD_T      = 1.5          # placeholder — measure before final print
+BOARD_T      = 1.6          # confirmed measurement 2026-06-25
 
 # Display
 LCD_W        = 165.0        # full panel face width  (= board body width)
@@ -87,7 +87,7 @@ INT_H        = (BOARD_H + 2 * TAB_EXT) + 2.0              # 126.0
 
 # ── Bezel ────────────────────────────────────────────────────────────────────
 BEZEL_T      = 3.0          # face-plate thickness
-STANDOFF_H   = DISP_DEPTH - BEZEL_T    # 4.0 mm (face-back → board front)
+STANDOFF_H   = DISP_DEPTH - BEZEL_T    # 4.0 mm (face-back → board front; display fits correctly)
 STANDOFF_OD  = 7.0
 CBORE_D      = 6.5          # M3 socket-head counterbore diameter
 CBORE_H      = 2.0          # counterbore depth
@@ -102,7 +102,7 @@ FONT         = "/usr/share/fonts/dejavu-sans-fonts/DejaVuSans-Bold.ttf"
 
 # ── Enclosure ────────────────────────────────────────────────────────────────
 ENC_BACK_T   = 3.0          # back wall (wedge-contact face)
-ENC_DEPTH    = ENC_BACK_T + COMP_CLEAR   # 12.0 mm total
+ENC_DEPTH    = ENC_BACK_T + COMP_CLEAR + BOARD_T   # 13.6 mm — extra BOARD_T lets rims close flush
 BOSS_OD      = 7.0
 BOSS_H       = COMP_CLEAR               # 9.0 mm (fills interior depth)
 BOSS_BORE_D  = 2.5          # M3 tap drill (or use Ø3 mm for heat-set insert)
@@ -239,10 +239,26 @@ def build_enclosure(doc):
     outer_z = [ej for ej in e.Edges
                if hasattr(ej.Curve, 'Direction')
                and abs(ej.Curve.Direction.z) > 0.99]
-    e = _try_fillet(e, 1.0, outer_z, "outer corners")
+    e = _try_fillet(e, CORNER_R, outer_z, "outer corners")
+
+    # ── 45° wedge-engagement chamfers on back-face top/bottom corners ────────
+    # The wedge's leg ends approach at 45°; chamfer matches that angle.
+    # 84mm wide (WEDGE_W + 4mm clearance), centered on X=0.
+    snap_c  = WEDGE_WALL + 1.0   # chamfer leg size: 4mm (>= leg thickness 3mm)
+    snap_hw = WEDGE_W / 2 + 2    # half-width of chamfer cut = 42mm
+    for y_sign in (+1, -1):
+        y0 = y_sign * FLANGE_H / 2
+        # Triangle in YZ: corner at (y0, 0), legs snap_c in -y_sign·Y and +Z
+        p0 = App.Vector(0, y0,                    0)
+        p1 = App.Vector(0, y0 - y_sign * snap_c,  0)
+        p2 = App.Vector(0, y0,                    snap_c)
+        tri = Part.Face(Part.makePolygon([p0, p1, p2, p0]))
+        prism = tri.extrude(App.Vector(snap_hw * 2, 0, 0))
+        prism.translate(App.Vector(-snap_hw, 0, 0))
+        e = e.cut(prism)
 
     # ── interior pocket — open at front ───────────────────────────────────────
-    inner = Part.makeBox(INT_W, INT_H, COMP_CLEAR + 1,
+    inner = Part.makeBox(INT_W, INT_H, ENC_DEPTH - ENC_BACK_T + 1,
                          App.Vector(-INT_W/2, -INT_H/2, ENC_BACK_T))
     e = e.cut(inner)
     inner_z = [ej for ej in e.Edges
@@ -259,7 +275,7 @@ def build_enclosure(doc):
         wall_x + 2,
         CONN_Y_HIGH - CONN_Y_LOW,
         ENC_DEPTH + 2,
-        App.Vector(INT_W/2 - 1, y_bot + CONN_Y_LOW, -1))
+        App.Vector(-FLANGE_W/2 - 1, y_bot + CONN_Y_LOW, -1))
     e = e.cut(conn)
 
     # ── M3 boss cylinders (back-wall inner face → front opening) ─────────────
@@ -269,7 +285,7 @@ def build_enclosure(doc):
                                  App.Vector(bx, by, ENC_BACK_T))
         # Blind thread bore from the front opening end
         thread = Part.makeCylinder(BOSS_BORE_D/2, BOSS_BORE_H + 1,
-                                   App.Vector(bx, by, ENC_DEPTH - BOSS_BORE_H))
+                                   App.Vector(bx, by, ENC_BACK_T + BOSS_H - BOSS_BORE_H))
         boss = boss.cut(thread)
         e = e.fuse(boss)
 
