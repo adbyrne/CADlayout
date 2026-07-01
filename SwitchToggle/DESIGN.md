@@ -118,8 +118,8 @@ Stub fills PivotClip bore (Ø4.2mm × 4mm deep) with 1mm in the lever-to-clip ga
 
 **T-slot** (at Y=0 bottom edge, fascia face):
 - Narrow stud slot: 3mm wide, Z=0..1, open at back face (Z=0) — stud protrudes into shell
-- Wide nut pocket: 5.5mm wide, Z=1..4, open at bottom (Y=0) — nut captured, can't pass back
-- Front wall: Z=4..6 = 2mm solid — nut hidden from operator
+- Wide nut pocket: 5.5mm wide, Z=1..3, open at bottom (Y=0) — nut captured, can't pass back
+- Front wall: Z=3..6 = 3mm solid — nut hidden from operator
 
 **Arm lengths from cylinder center (Y=17.5):**
 - Upper thumb arm: 17.5mm
@@ -209,7 +209,7 @@ Resistors at control panel end — adjust brightness without disturbing toggle.
 | Lever | 20mm W × 35mm H × 6mm T |
 | Cylinder | Ø8mm × 20mm, center at Y=17.5, Z=2 |
 | T-slot stud | 3mm W × Z=0..1, open at back face |
-| T-slot nut | 5.5mm W × Z=1..4, open at bottom |
+| T-slot nut | 5.5mm W × Z=1..3, open at bottom |
 | Effective cable arm | ~14.5mm → 20° swing for 5mm travel |
 | PivotClip snap walls | 1.25mm each side (6mm body − 3.5mm slot) / 2 |
 
@@ -232,6 +232,7 @@ Resistors at control panel end — adjust brightness without disturbing toggle.
 | 8 | 4×M3 corner screws for fascia mount | Simple v1 fastening |
 | 9 | Lever print orientation | Flip 180° in slicer (operator face on bed) |
 | 10 | LED diagonal placement (v6) | Top-left + bottom-right: LEDs face opposite sides, clear route indication without obscuring fascia center |
+| 14 | Nut pocket height reduced to 2mm (Z=1..3) | Thickens front wall to 3mm (was 2mm) — more material hiding/retaining the nut |
 
 ---
 
