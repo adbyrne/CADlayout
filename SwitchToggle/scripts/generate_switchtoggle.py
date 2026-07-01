@@ -118,7 +118,7 @@ CYL_PIVOT_Z_CTR =  2.0   # local Z centre: flush at back face, 2mm proud at fron
 
 # T-slot in lower arm for stud+nut connection
 NUT_POCKET_W   =  5.5
-NUT_POCKET_Z   =  3.0
+NUT_POCKET_Z   =  2.0
 NUT_POCKET_Z0  =  1.0
 STUD_SLOT_W    =  3.0
 STUD_SLOT_Y    =  5.0
