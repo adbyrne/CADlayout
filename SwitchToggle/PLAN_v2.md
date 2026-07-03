@@ -172,17 +172,16 @@ from the lever path.
 | Priority | Item | Status |
 |----------|------|--------|
 | **Done** | **Fulcrum redesign (v8)** | **Complete 2026-04-28: stub axles + PivotClip; no external pin** |
+| **Done** | **PivotClip swing clearance + tang/wall reinforcement (v9)** | **Printed and field-tested 2026-07-03 — confirmed working** |
 | High | 1 — JST-XH connector pocket | Blocked: measure PEBA 3-pin socket body first |
 | High | 2 — LED retention bezel | Ready to implement |
 | Medium | 5 — Snap tabs / M2 screws | Stretch goal |
 | Low | 9 — Wire management clips | Optional filler |
 | Separate | 6 — Fascia mount collet | Separate sub-project |
-| Deferred | 3, 4, 8 | Pending field test of v8 print |
+| Deferred | 3, 4, 8 | v9 field test passed 2026-07-03 — no longer blocked, just not prioritized yet |
 | Skipped | 7 — Orientation labels | Paint pen preferred over CAD text |
 
-**Next action:** Print v9 (Shell + FrontPlate + Lever + PivotClip ×2) and test snap feel.
-CLIP_TANG_W=3.95mm (v9) may need tuning ±0.1mm for press-fit tightness on first print.
-Then implement item 2 (LED retention bezel).
+**Next action:** Implement item 2 (LED retention bezel).
 
 ---
 
