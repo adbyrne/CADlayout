@@ -180,8 +180,8 @@ from the lever path.
 | Deferred | 3, 4, 8 | Pending field test of v8 print |
 | Skipped | 7 — Orientation labels | Paint pen preferred over CAD text |
 
-**Next action:** Print v8 (Shell + FrontPlate + Lever + PivotClip ×2) and test snap feel.
-CLIP_TANG_W=3.9mm may need tuning ±0.1mm for press-fit tightness on first print.
+**Next action:** Print v9 (Shell + FrontPlate + Lever + PivotClip ×2) and test snap feel.
+CLIP_TANG_W=3.95mm (v9) may need tuning ±0.1mm for press-fit tightness on first print.
 Then implement item 2 (LED retention bezel).
 
 ---

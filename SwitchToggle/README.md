@@ -10,10 +10,9 @@ Sullivan Gold-N-Rod #504 R/C Bowden cable. Two red LEDs indicate the set route.
 | Part | Qty | Description |
 |------|-----|-------------|
 | Shell | 1 | 50×50×12mm hollow tray, open front face |
-| FrontPlate | 1 | 50×50×3mm plate + 8mm pivot posts |
-| Lever | 1 | 20×35×6mm paddle with Ø8mm cylinder fulcrum |
-| PivotClip | 1 | Retains M2 pivot pin in post |
-| M2×25mm pivot pin | 1 | Through posts and cylinder |
+| FrontPlate | 1 | 50×50×3mm plate + 4×4mm mortise pockets (no integral posts) |
+| Lever | 1 | 20×35×6mm paddle with Ø8mm cylinder fulcrum + Ø4mm stub axles |
+| PivotClip | 2 | 4×6×10mm snap-capture clip; press-fits into FrontPlate mortise, captures lever stub |
 | 2-56 stud + nut | 1 | Pre-assembled; slides into T-slot from bottom |
 | 5mm red LED | 2 | Top-left and bottom-right corners for route indication |
 | JST-XH 2.5mm 3-pin | 1 | LED wiring connector |
@@ -26,10 +25,10 @@ Sullivan Gold-N-Rod #504 R/C Bowden cable. Two red LEDs indicate the set route.
 
 | Setting | Value |
 |---------|-------|
-| Material | PETG |
+| Material | PLA |
 | Printer | Prusa Core One |
 | Supports | None |
-| Orientation | Shell and FrontPlate: open face up; Lever: flip 180° around X in PrusaSlicer |
+| Orientation | Shell and FrontPlate: open face up; Lever: flip 180° around X in PrusaSlicer; PivotClip: tang down, body up |
 
 ### Regenerate from Script
 
@@ -43,7 +42,9 @@ exec(open("/home/abyrne/Projects/Trains/CADlayout/SwitchToggle/scripts/generate_
 1. Install LEDs in shell side walls (top LED in left wall Y=38, bottom LED in right wall Y=12)
 2. Route LED wires through shell interior; exit through 5mm cable hole in back wall
 3. Glue FrontPlate to shell front rim (alignment pegs register it)
-4. Insert lever between posts; pass M2 pin through; retain with M2 nut
+4. Position lever between the two mortise pockets, stubs pointing left and right; press each
+   PivotClip straight down over its stub — stub snaps through the entry slot into the bore,
+   tang seats in the FrontPlate mortise (press-fit, no external hardware)
 5. Slide pre-assembled stud+nut into T-slot from bottom edge
 6. Route Gold-N-Rod inner rod through fascia and shell slots; thread onto stud
 
