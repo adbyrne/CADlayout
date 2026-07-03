@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate SwitchToggle v8 parametric model in FreeCAD.
+"""Generate SwitchToggle v9 parametric model in FreeCAD.
 
 FOUR 3D-printable parts:
 
@@ -8,15 +8,34 @@ FOUR 3D-printable parts:
   Lever      — Ø8mm pivot cylinder with Ø4mm stub axles at each end (no pin hole)
   PivotClip  — press-fit into FrontPlate mortise; snap-captures lever stub (print x2)
 
+Changes from v8:
+  - Toggle swing clearance: PivotClip body height (POST_H) 8mm → 10mm, moving the
+    pivot bore centre 1mm further from the FrontPlate face (world Z 19 → 20).
+    Lever placement (LEV_ASM_Z) shifts to match automatically. Addresses the lever
+    rubbing against the FrontPlate/clip base through its ~20° swing.
+  - PivotClip tang/wall connection: the material bridging the tang to the snap-wall
+    pillars, at the Z=0 body/tang transition, was only 0.2mm thick (CLIP_TANG_W
+    3.9mm vs CLIP_SNAP_W 3.5mm) — thinner than one nozzle line, a likely print/
+    breakage point. CLIP_SNAP_W 3.5→3.0mm and CLIP_TANG_W 3.9→3.95mm widen that
+    overlap to ~0.475mm each side (snap now needs ~0.5mm wall flex per side,
+    up from 0.25mm).
+  - PivotClip fillets/chamfers: previously had none, unlike the other three parts.
+    Added cosmetic R0.5mm fillet on outer corners/top cap, functional chamfers at
+    the bore mouths (0.3mm) and tang lead-in (0.4mm), and an R0.2mm fillet at the
+    snap wall's Z=0 root (its inner, slot-facing surface — the face actually
+    pushed by the stub during snap-through, fixed at its base) to relieve the
+    real bending stress-concentration point, distinct from the tang/wall overlap
+    reinforced above.
+
 Changes from v7:
   - Fulcrum redesign: M2 pivot pin eliminated; no external hardware required
       Lever:       pin hole removed; Ø4mm×5mm stub axles added at each cylinder end
       FrontPlate:  integral 4×4×8mm posts removed; 4×4mm through-mortise pockets added
       PivotClip:   new 4th printed part (print x2):
-                     body 4×6×8mm sits proud of plate (6mm Y for snap wall material)
-                     tang 3.9×3.9×3mm press-fits into FrontPlate mortise
+                     body 4×6×10mm sits proud of plate (6mm Y for snap wall material)
+                     tang 3.95×3.95×3mm press-fits into FrontPlate mortise
                      Ø4.2mm bore through X at body centre captures lever stub
-                     3.5mm entry slot (< Ø4mm stub → snap feel) at body base
+                     3.0mm entry slot (< Ø4mm stub → snap feel) at body base
 
 Assembly (v8):
   1. Position lever with stubs pointing left and right
@@ -26,8 +45,8 @@ Assembly (v8):
 
 Replacement: press new clip down over stub; no shell disassembly required.
 
-Key geometry (unchanged from v7):
-  - Pivot bore centre at world Y=25, world Z=19
+Key geometry:
+  - Pivot bore centre at world Y=25, world Z=20 (v9: was Z=19; +1mm plate clearance)
   - Clip bores: world X=10..14 (left) and X=36..40 (right)
   - Lever stubs: world X=10..15 (left) and X=35..40 (right)
 
@@ -48,6 +67,29 @@ def _try_fillet(shape, radius, edges, label=""):
         return result
     except Exception as ex:
         print(f"  fillet({label}): FAILED ({ex}), skipping")
+        return shape
+
+
+def _edge_curve(e):
+    """Return e.Curve, or None if FreeCAD can't resolve the curve type
+    (some fillet/chamfer blend edges raise TypeError on access)."""
+    try:
+        return e.Curve
+    except Exception:
+        return None
+
+
+def _try_chamfer(shape, size, edges, label=""):
+    """Apply makeChamfer; return original shape with a warning on failure."""
+    if not edges:
+        print(f"  chamfer({label}): no edges matched, skipping")
+        return shape
+    try:
+        result = shape.makeChamfer(size, edges)
+        print(f"  chamfer({label}): {size}mm on {len(edges)} edges OK")
+        return result
+    except Exception as ex:
+        print(f"  chamfer({label}): FAILED ({ex}), skipping")
         return shape
 
 
@@ -93,7 +135,7 @@ PEG_POSITIONS  = [(5.0, 1.0), (45.0, 1.0), (5.0, 49.0), (45.0, 49.0)]
 PLATE_T       =  3.0
 POST_W        =  4.0   # mortise X width (= old post width)
 POST_D        =  4.0   # mortise Y depth (= old post depth)
-POST_H        =  8.0   # clip body height above plate
+POST_H        = 10.0   # clip body height above plate (v9: +2mm → toggle pivot centre sits 1mm further from plate face for swing clearance)
 POST_LEFT_X   = 10.0   # left post/clip/mortise left edge
 POST_RIGHT_X  = 36.0   # right post/clip/mortise left edge
 POST_Y_CENTER = 25.0
@@ -103,9 +145,26 @@ STUB_DIA      =  4.0   # lever stub diameter
 STUB_LEN      =  5.0   # stub length from lever face (1mm gap + 4mm into bore)
 CLIP_BORE_DIA =  4.2   # bore through clip body (running fit on stub)
 CLIP_BODY_Y   =  6.0   # clip body Y width (wider than mortise for snap walls)
-CLIP_SNAP_W   =  3.5   # entry slot width in Y (< STUB_DIA → snap feel on install)
-CLIP_TANG_W   =  3.9   # tang X/Y (press-fits into MORTISE_W pocket; tune ±0.1mm)
+CLIP_SNAP_W   =  3.0   # entry slot width in Y (< STUB_DIA → snap feel on install)
+                        # (v9: 3.5→3.0mm — widens tang/wall overlap at Z=0, see CLIP_TANG_W)
+CLIP_TANG_W   =  3.95  # tang X/Y (press-fits into MORTISE_W pocket; tune ±0.1mm)
+                        # (v9: 3.9→3.95mm — with narrower CLIP_SNAP_W, tang/wall overlap
+                        #  at the Z=0 transition grows from 0.2mm to ~0.475mm each side —
+                        #  the prior 0.2mm sliver was thinner than one nozzle line width)
 MORTISE_W     =  4.0   # through-pocket in FrontPlate
+
+# --- PivotClip fillets/chamfers (v9 — clip previously had none) ---
+CLIP_CORNER_FILLET  = 0.5   # cosmetic outer corners + top cap (scaled down from the
+                             # 1.5mm used on Shell/FrontPlate/Lever — clip cross-section
+                             # is only 4x6mm)
+CLIP_BORE_CHAMFER   = 0.3   # bore mouths (both ends) — eases stub engagement, reduces
+                             # edge scrape against the stub during lever rotation
+CLIP_TANG_CHAMFER   = 0.4   # tang leading edge — lead-in for FrontPlate mortise press-fit
+CLIP_SLOT_ROOT_FILLET = 0.2 # root of the snap wall's inner (slot-facing) face at Z=0,
+                             # where the entry slot meets the tang plane — the surface
+                             # actually pushed by the stub during snap-through, fixed at
+                             # its base; the real bending stress-concentration point
+                             # (kept small so it doesn't widen the slot)
 
 # --- Lever (Part C) ---
 LEV_W = 20.0
@@ -126,7 +185,7 @@ STUD_SLOT_Y    =  5.0
 # --- Assembly placements (visual only; STLs export at part origin) ---
 LEV_ASM_X = (BASE_W - LEV_W) / 2                                # = 15.0
 LEV_ASM_Y = BASE_H / 2 - LEV_PIVOT_Y                            # =  7.5
-LEV_ASM_Z = SHELL_DEPTH + PLATE_T + POST_H / 2 - CYL_PIVOT_Z_CTR  # = 17.0
+LEV_ASM_Z = SHELL_DEPTH + PLATE_T + POST_H / 2 - CYL_PIVOT_Z_CTR  # = 18.0
 
 # --- Export ---
 EXPORT_DIR  = "printed_files"
@@ -341,26 +400,27 @@ def build_pivot_clip():
     """Part D (print x2): press-fit into FrontPlate mortise; snap-captures lever stub.
 
     Local coords: Z=0 at body base (rests on FrontPlate front face).
-      Body:      POST_W × CLIP_BODY_Y × POST_H  (4×6×8mm, above plate)
-      Tang:      CLIP_TANG_W × CLIP_TANG_W × PLATE_T  (3.9×3.9×3mm, below Z=0)
+      Body:      POST_W × CLIP_BODY_Y × POST_H  (4×6×10mm, above plate)
+      Tang:      CLIP_TANG_W × CLIP_TANG_W × PLATE_T  (3.95×3.95×3mm, below Z=0)
       Bore:      Ø4.2mm through X at Y=CLIP_BODY_Y/2, Z=POST_H/2
       Entry slot: CLIP_SNAP_W wide in Y, from Z=0 to bore centre (Z=POST_H/2)
-                  Full X width; 1.25mm snap walls on each Y side.
+                  Full X width; 1.5mm snap walls on each Y side (v9: was 1.25mm),
+                  giving ~0.475mm tang/wall overlap at Z=0 (v9: was 0.2mm).
 
-    Assembly: press clip straight down; stub squeezes through 3.5mm slot and
+    Assembly: press clip straight down; stub squeezes through 3.0mm slot and
     snaps into the 4.2mm bore. Tang seats in FrontPlate mortise (press-fit).
     """
     import FreeCAD, Part
 
     bore_y = CLIP_BODY_Y / 2   # = 3.0 — bore Y centre in clip local
-    bore_z = POST_H / 2        # = 4.0 — bore Z centre in clip local
+    bore_z = POST_H / 2        # = 5.0 — bore Z centre in clip local (v9: +1mm from plate face)
 
     # Body
     result = Part.makeBox(POST_W, CLIP_BODY_Y, POST_H)
 
     # Tang: centred in body XY, extends below Z=0 into FrontPlate mortise
-    tang_x0 = (POST_W    - CLIP_TANG_W) / 2   # = 0.05
-    tang_y0 = (CLIP_BODY_Y - CLIP_TANG_W) / 2  # = 1.05
+    tang_x0 = (POST_W    - CLIP_TANG_W) / 2   # = 0.025
+    tang_y0 = (CLIP_BODY_Y - CLIP_TANG_W) / 2  # = 1.025
     tang = Part.makeBox(
         CLIP_TANG_W, CLIP_TANG_W, PLATE_T,
         FreeCAD.Vector(tang_x0, tang_y0, -PLATE_T)
@@ -377,7 +437,7 @@ def build_pivot_clip():
 
     # Entry slot: open at body base (Z=0), runs to bore centre (Z=bore_z)
     # Full X width so X-axis stub enters freely as clip descends.
-    # CLIP_SNAP_W in Y → 1.25mm snap walls each side → snap feel on install.
+    # CLIP_SNAP_W in Y → 1.5mm snap walls each side → snap feel on install.
     slot = Part.makeBox(
         POST_W + 2, CLIP_SNAP_W, bore_z,
         FreeCAD.Vector(-1, bore_y - CLIP_SNAP_W / 2, 0)
@@ -385,6 +445,53 @@ def build_pivot_clip():
     result = result.cut(slot)
 
     result = result.removeSplitter()
+
+    # Cosmetic: soften outer corners and top cap edges (small radius — this
+    # part's cross-section is only 4x6mm, unlike the 1.5mm used elsewhere)
+    _vc = [e for e in result.Edges
+           if hasattr(_edge_curve(e), 'Direction')
+           and abs(abs(e.Curve.Direction.z) - 1.0) < 0.05
+           and any(abs(e.CenterOfMass.x - cx) < 0.3 and abs(e.CenterOfMass.y - cy) < 0.3
+                   for cx, cy in [(0, 0), (POST_W, 0), (0, CLIP_BODY_Y), (POST_W, CLIP_BODY_Y)])]
+    result = _try_fillet(result, CLIP_CORNER_FILLET, _vc, "clip outer corners")
+
+    _tc = [e for e in result.Edges
+           if hasattr(_edge_curve(e), 'Direction')
+           and abs(e.Curve.Direction.z) < 0.05
+           and abs(e.CenterOfMass.z - POST_H) < 0.2]
+    result = _try_fillet(result, CLIP_CORNER_FILLET, _tc, "clip top cap edges")
+
+    # Functional: chamfer bore mouths (both ends) — eases stub engagement and
+    # reduces edge scrape against the stub during lever rotation
+    _bm = [e for e in result.Edges
+           if hasattr(_edge_curve(e), 'Radius')
+           and abs(e.Curve.Radius - CLIP_BORE_DIA / 2) < 0.05
+           and (abs(e.CenterOfMass.x) < 0.3 or abs(e.CenterOfMass.x - POST_W) < 0.3)]
+    result = _try_chamfer(result, CLIP_BORE_CHAMFER, _bm, "clip bore mouths")
+
+    # Functional: chamfer tang's leading (bottom) edge — lead-in for the
+    # FrontPlate mortise press-fit
+    _tg = [e for e in result.Edges
+           if hasattr(_edge_curve(e), 'Direction')
+           and abs(e.Curve.Direction.z) < 0.05
+           and abs(e.CenterOfMass.z - (-PLATE_T)) < 0.2]
+    result = _try_chamfer(result, CLIP_TANG_CHAMFER, _tg, "clip tang lead-in")
+
+    # Functional: fillet the root of the snap wall's inner (slot-facing) face,
+    # at Z=0 where the entry slot meets the tang plane. This is the surface
+    # that's actually pushed by the stub during snap-through, fixed at its
+    # base (Z=0) — the real bending stress-concentration point, distinct from
+    # the tang's own (outer) edge at Y=tang_y0 handled by decision #16.
+    # (excludes sub-1mm fragments at the X ends, where the slot cut meets the
+    # tang's corner — filleting those tiny slivers fails: BRep_API not-done)
+    _sb = [e for e in result.Edges
+           if hasattr(_edge_curve(e), 'Direction')
+           and abs(abs(e.Curve.Direction.x) - 1.0) < 0.05
+           and abs(e.CenterOfMass.z) < 0.2
+           and e.Length > 1.0
+           and (abs(e.CenterOfMass.y - (bore_y - CLIP_SNAP_W / 2)) < 0.2
+                or abs(e.CenterOfMass.y - (bore_y + CLIP_SNAP_W / 2)) < 0.2)]
+    result = _try_fillet(result, CLIP_SLOT_ROOT_FILLET, _sb, "clip slot wall root")
 
     sc = len(result.Solids)
     if sc != 1:

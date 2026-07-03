@@ -16,14 +16,14 @@ cable hole.
 
 ---
 
-## Four-Part Design (v8 — current)
+## Four-Part Design (v9 — current)
 
 | Part | Qty | Description |
 |------|-----|-------------|
 | Shell | 1 | 50×50×12mm hollow tray, open front face |
 | FrontPlate | 1 | 50×50×3mm plate + 4×4mm mortise pockets (no integral posts) |
 | Lever | 1 | 20×35×6mm paddle with Ø8mm cylinder + Ø4mm stub axles |
-| PivotClip | 2 | 4×6×8mm snap-capture clip; press-fits into FrontPlate mortise |
+| PivotClip | 2 | 4×6×10mm snap-capture clip; press-fits into FrontPlate mortise |
 | 2-56 stud | 1 | Short cut section of 2-56 rod (~10mm) |
 | 2-56 nut | 1 | Pre-assembled on stud; slides into T-slot from bottom |
 | 5mm LED (red) | 2 | Left wall near top (Y=38), right wall near bottom (Y=12) |
@@ -40,7 +40,7 @@ No external pivot pin or rod required — PivotClips capture the lever stubs.
 3. Crimp JST-XH socket onto LED cable
 4. Place FrontPlate onto shell (alignment pegs register it); glue with CA
 5. Position lever between the two mortise pockets with stubs pointing left and right
-6. Press each PivotClip straight down over its stub — stub snaps through the 3.5mm entry slot into the Ø4.2mm bore; tang seats in FrontPlate mortise
+6. Press each PivotClip straight down over its stub — stub snaps through the 3.0mm entry slot into the Ø4.2mm bore; tang seats in FrontPlate mortise
 7. Pre-assemble 2-56 stud+nut (thread nut a few turns onto cut stud)
 8. Slide stud+nut into T-slot from Y=0 bottom edge — nut into wide pocket, stud into narrow slot
 9. Route Gold-N-Rod inner rod through fascia, shell rod slot, FrontPlate slot; thread onto stud
@@ -126,32 +126,53 @@ Stub fills PivotClip bore (Ø4.2mm × 4mm deep) with 1mm in the lever-to-clip ga
 - Lower cable arm: 17.5mm to pivot, rod hole at Y≈3 → effective arm ≈ 14.5mm
 - Cable travel: 5mm at 14.5mm arm → swing = arcsin(5/14.5) ≈ 20°
 
-### PivotClip — 4 × 6 × 8mm body + 3.9 × 3.9 × 3mm tang (print × 2)
+### PivotClip — 4 × 6 × 10mm body + 3.95 × 3.95 × 3mm tang (print × 2)
 
 Replaces the integral pivot posts from v7. Both clips are identical — mirror placement only.
 
 ```
-  Z=8 ┌──────────────────┐
-      │    BODY (4×6mm)  │  bore at Z=4 (mid-height)
-  Z=4 ├──────(O)─────────┤  ← Ø4.2mm bore (X-axis)
-      │    entry slot    │  3.5mm wide in Y, open at Z=0
+  Z=10┌──────────────────┐
+      │    BODY (4×6mm)  │  bore at Z=5 (mid-height)
+  Z=5 ├──────(O)─────────┤  ← Ø4.2mm bore (X-axis)
+      │    entry slot    │  3.0mm wide in Y, open at Z=0
   Z=0 └──────────────────┘  ← rests on FrontPlate front face
-      │    TANG (3.9sq)  │  press-fits into FrontPlate 4×4mm mortise
+      │   TANG (3.95sq)  │  press-fits into FrontPlate 4×4mm mortise
   Z=-3└──────────────────┘
 ```
 
-**Snap walls:** (CLIP_BODY_Y − CLIP_SNAP_W) / 2 = (6 − 3.5) / 2 = **1.25mm** each side.
-Stub (Ø4mm) squeezes through 3.5mm slot → snap feel → seated in Ø4.2mm bore.
+**Snap walls:** (CLIP_BODY_Y − CLIP_SNAP_W) / 2 = (6 − 3.0) / 2 = **1.5mm** each side.
+Stub (Ø4mm) squeezes through 3.0mm slot → snap feel → seated in Ø4.2mm bore.
 
-**Assembly:** press clip straight down; bore descends to stub height (world Z=19) at full insertion.
+**Tang/wall overlap:** (CLIP_TANG_W − CLIP_SNAP_W) / 2 = (3.95 − 3.0) / 2 = **0.475mm** each side —
+the solid material bridging the tang to the snap-wall pillars at the Z=0 transition (v9: was
+0.2mm with CLIP_TANG_W=3.9/CLIP_SNAP_W=3.5 — thinner than one nozzle line, a print/breakage risk).
+
+**Fillets/chamfers (v9 — previously none):**
+- Outer body corners + top cap edges: R0.5mm fillet (cosmetic; scaled down from the 1.5mm used
+  on Shell/FrontPlate/Lever to suit the 4×6mm cross-section)
+- Bore mouths (both ends): 0.3mm chamfer — eases stub engagement, reduces edge scrape against
+  the stub during lever rotation
+- Tang leading edge: 0.4mm chamfer — lead-in for the FrontPlate mortise press-fit
+- Snap wall root (Z=0, at Y=bore_y−CLIP_SNAP_W/2 and Y=bore_y+CLIP_SNAP_W/2 — the entry
+  slot's own wall boundary, not the tang's edge): R0.2mm fillet. This is the root of the
+  wall's inner (slot-facing) surface — the face actually pushed by the stub during
+  snap-through, fixed at its base — the real bending stress-concentration point (kept
+  small so it doesn't widen the slot)
+
+**Assembly:** press clip straight down; bore descends to stub height (world Z=20) at full insertion.
 
 | Feature | Dimension |
 |---------|-----------|
-| Body | 4×6×8mm (X×Y×Z) |
-| Tang | 3.9×3.9×3mm, centred in body XY |
-| Bore | Ø4.2mm, X-axis, at Y=3 Z=4 (clip local) = Y=25 Z=19 (world) |
-| Entry slot | 3.5mm wide (Y), full X width, Z=0..4 |
-| Snap wall | 1.25mm each Y side |
+| Body | 4×6×10mm (X×Y×Z) |
+| Tang | 3.95×3.95×3mm, centred in body XY |
+| Bore | Ø4.2mm, X-axis, at Y=3 Z=5 (clip local) = Y=25 Z=20 (world) |
+| Entry slot | 3.0mm wide (Y), full X width, Z=0..5 |
+| Snap wall | 1.5mm each Y side |
+| Tang/wall overlap | 0.475mm each Y side |
+| Outer corner/top fillet | R0.5mm |
+| Bore mouth chamfer | 0.3mm |
+| Tang lead-in chamfer | 0.4mm |
+| Snap wall root fillet | R0.2mm |
 | Left placement | world X=10, Y=22, Z=15 |
 | Right placement | world X=36, Y=22, Z=15 |
 
@@ -196,11 +217,11 @@ Resistors at control panel end — adjust brightness without disturbing toggle.
 |---------|-----------|
 | Shell | 50 × 50 × 12mm |
 | FrontPlate | 50 × 50 × 3mm |
-| PivotClip body | 4×6×8mm, world Z=15..23 |
-| PivotClip tang | 3.9×3.9×3mm, world Z=12..15 |
+| PivotClip body | 4×6×10mm, world Z=15..25 |
+| PivotClip tang | 3.95×3.95×3mm, world Z=12..15 |
 | Mortise pockets | 4×4mm, X=10..14 and X=36..40, Y=23..27 |
 | Lever stub | Ø4mm×5mm, world X=10..15 (L) and X=35..40 (R) |
-| Pivot world position | X=25, Y=25, Z=19 |
+| Pivot world position | X=25, Y=25, Z=20 |
 | Rod slot (shell + plate) | 5×14mm, X=22.5..27.5, Y=8..22 |
 | Cable hole | Ø5mm, X=25, Y=28, back wall |
 | LED top | Ø5.2mm, left wall X=0..2, Y=38, Z=9 |
@@ -211,7 +232,8 @@ Resistors at control panel end — adjust brightness without disturbing toggle.
 | T-slot stud | 3mm W × Z=0..1, open at back face |
 | T-slot nut | 5.5mm W × Z=1..3, open at bottom |
 | Effective cable arm | ~14.5mm → 20° swing for 5mm travel |
-| PivotClip snap walls | 1.25mm each side (6mm body − 3.5mm slot) / 2 |
+| PivotClip snap walls | 1.5mm each side (6mm body − 3.0mm slot) / 2 |
+| PivotClip tang/wall overlap | 0.475mm each side (3.95mm tang − 3.0mm slot) / 2 |
 
 ---
 
@@ -223,8 +245,8 @@ Resistors at control panel end — adjust brightness without disturbing toggle.
 | 2 | Single rod slot (5×14mm vertical) | ±4mm install tolerance; unit orientation set at install |
 | 3 | Cylinder as fulcrum (Ø8mm, X-axis) | Clean pivot, visible feature, symmetric in Y |
 | 11 | Stub axles + PivotClip (v8) | Eliminates M2 pivot pin; no external hardware; clip replaceable without shell disassembly |
-| 12 | Snap entry slot 3.5mm < Ø4mm stub (v8) | Snap-feel install confirms seating; once in bore, requires deliberate force to remove |
-| 13 | Clip body 6mm Y vs 4mm mortise (v8) | Extra 2mm each side provides 1.25mm snap walls — adequate flex in PLA/PETG |
+| 12 | Snap entry slot 3.0mm < Ø4mm stub (v8; narrowed v9) | Snap-feel install confirms seating; once in bore, requires deliberate force to remove |
+| 13 | Clip body 6mm Y vs 4mm mortise (v8) | Extra 2mm each side provides 1.5mm snap walls — adequate flex in PLA/PETG |
 | 4 | T-slot rod connection | Pre-assembled stud+nut slides in; no front-face hardware |
 | 5 | JST-XH 2.5mm 3-pin | From existing PEBA brand inventory |
 | 6 | Resistor at control panel end | Brightness adjustment without touching toggle |
@@ -233,6 +255,9 @@ Resistors at control panel end — adjust brightness without disturbing toggle.
 | 9 | Lever print orientation | Flip 180° in slicer (operator face on bed) |
 | 10 | LED diagonal placement (v6) | Top-left + bottom-right: LEDs face opposite sides, clear route indication without obscuring fascia center |
 | 14 | Nut pocket height reduced to 2mm (Z=1..3) | Thickens front wall to 3mm (was 2mm) — more material hiding/retaining the nut |
+| 15 | PivotClip body height 8mm → 10mm (v9) | Pivot bore centre moves 1mm further from FrontPlate face (world Z=19 → 20) — extra swing clearance so lever doesn't rub against plate/clip base through its ~20° travel |
+| 16 | PivotClip tang 3.9→3.95mm, entry slot 3.5→3.0mm (v9) | Tang/wall overlap at Z=0 was 0.2mm — thinner than one nozzle line, a print/breakage risk. Widened to 0.475mm each side |
+| 17 | PivotClip fillets/chamfers added (v9) | Previously had none, unlike the other 3 parts. Cosmetic R0.5mm on outer corners/top cap; functional chamfers at bore mouths and tang lead-in; R0.2mm fillet at the snap wall's Z=0 root (inner slot-facing surface, fixed end) — the real bending stress-concentration point during snap-through, distinct from the tang/wall overlap fixed in decision #16 |
 
 ---
 
@@ -258,4 +283,4 @@ See `PLAN_v2.md`.
 
 ---
 
-*Created: 2026-03-16 | v5 CAD: 2026-03-17 | v6 CAD (baseline): 2026-03-18 | v7 CAD (fillets): 2026-03-18 | v8 CAD (PivotClip, no external pin): 2026-04-28*
+*Created: 2026-03-16 | v5 CAD: 2026-03-17 | v6 CAD (baseline): 2026-03-18 | v7 CAD (fillets): 2026-03-18 | v8 CAD (PivotClip, no external pin): 2026-04-28 | v9 CAD (PivotClip swing clearance + tang/wall reinforcement + fillets/chamfers): 2026-07-03*
