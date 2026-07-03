@@ -269,17 +269,24 @@ See `PLAN_v2.md`.
 
 ## Reference Screenshots (`docs/`)
 
+All current as of v9 (2026-07-03).
+
 | File | Shows |
 |------|-------|
-| `assembly_isometric.png` | Full three-part assembly, isometric |
-| `assembly_side.png` | Assembly side view — lever cylinder + post relationship |
+| `v9_assembly_iso.png` | Full four-part assembly, isometric |
+| `v9_assembly_front.png` | Assembly front elevation — T-slot, PivotClips either side of lever |
+| `v9_assembly_side.png` | Assembly side elevation — pivot bore clearance above the FrontPlate face |
+| `v9_assembly_top.png` | Assembly top-down isometric — FrontPlate mount holes + PivotClips either side of lever |
+| `shell_isometric.png` | Shell — interior, rod slot, cable hole, alignment pegs, M3 mount holes |
 | `shell_back.png` | Shell back face — rod slot, cable hole, M3 holes |
 | `shell_left.png` | Shell left side — top LED hole in left wall (Y=38) |
 | `shell_right.png` | Shell right side — bottom LED hole in right wall (Y=12) |
-| `frontplate_front.png` | FrontPlate front face — posts, pin holes, rod clearance slot |
-| `lever_isometric.png` | Lever — T-slot entry visible |
+| `frontplate_isometric.png` | FrontPlate — mortise pockets (v8+; no integral posts), rod clearance slot |
+| `lever_isometric.png` | Lever — stub axles (v8+; no pivot pin), T-slot entry visible |
 | `lever_back.png` | Lever — smooth operator face |
-| `lever_fascia.png` | Lever — cylinder protrusion + T-slot profile |
+| `lever_fascia.png` | Lever — fascia face: cylinder protrusion + T-slot profile |
+| `pivotclip_isometric.png` | PivotClip — tang, bore, entry slot, fillets/chamfers (v9) |
+| `pivotclip_profile.png` | PivotClip — "keyhole" profile: entry slot narrowing into the bore |
 
 ---
 
